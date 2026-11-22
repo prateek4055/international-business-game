@@ -140,12 +140,13 @@
   }
 }
 
-/* ─── Root Background (Rich Gamified Board Surface) ─────────────────────── */
+/* ─── Root Background (Bright, Calm, Dimensional Environment #E9F5F8) ───── */
 body {
-  background: radial-gradient(ellipse at 50% 25%, #1B4B75 0%, #0E2B45 55%, #071726 100%);
+  background: #E9F5F8;
   background-attachment: fixed;
   min-height: 100dvh;
-  color: #F7FCFF;
+  color: #163650;
+  font-family: 'Fredoka', 'Outfit', system-ui, sans-serif;
 }
 
 /* ─── Subtle Ambient Vignette ─────────── */
@@ -153,98 +154,152 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at 50% 30%, rgba(27, 75, 117, 0.3) 0%, rgba(7, 23, 38, 0.85) 100%);
+  background: radial-gradient(circle at 50% 15%, rgba(255, 255, 255, 0.7) 0%, rgba(220, 238, 244, 0.45) 60%, rgba(200, 226, 235, 0.35) 100%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* ─── Claymorphism Panels ───────────────────── */
+/* ─── Premium Claymorphism Panels ───────────────────── */
 .clay-card {
-  background: linear-gradient(180deg, #1C4566 0%, #13334E 100%);
-  border: 2px solid rgba(255, 255, 255, 0.22);
+  background: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.95);
   border-radius: 22px;
-  box-shadow: 
-    0 8px 24px rgba(7, 23, 38, 0.6),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 5px 12px rgba(27, 65, 99, 0.16);
 }
 
-.clay-card-gold {
-  background: linear-gradient(180deg, #FFD24D 0%, #F5A623 100%);
-  border: 2px solid rgba(255, 255, 255, 0.7);
+.clay-card-navy {
+  background: #193D5B;
+  border-radius: 22px;
+  box-shadow: 0 6px 16px rgba(25, 61, 91, 0.22);
+  color: #FFFFFF;
+}
+
+.clay-card-blue {
+  background: #DCEEF4;
+  border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 20px;
-  box-shadow: 
-    0 8px 20px rgba(245, 166, 35, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 10px rgba(27, 65, 99, 0.1);
 }
 
-.clay-card-mint {
-  background: linear-gradient(180deg, #48D080 0%, #20A05A 100%);
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 20px;
-  box-shadow: 
-    0 8px 20px rgba(32, 160, 90, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+/* ─── Reusable Button Design System ────────────────────────── */
+/* Primary Button: #168B91, White Text, Fredoka SemiBold, Radius 16px, Soft Bottom Shadow */
+.btn-primary,
+.btn-arcade-green,
+.btn-clay-mint {
+  background: #168B91;
+  color: #FFFFFF;
+  font-family: 'Fredoka', system-ui, sans-serif;
+  font-weight: 600;
+  border-radius: 16px;
+  box-shadow: 0 4px 0 #10666A, 0 8px 16px rgba(22, 139, 145, 0.28);
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+.btn-primary:hover,
+.btn-arcade-green:hover,
+.btn-clay-mint:hover {
+  filter: brightness(1.04);
+}
+.btn-primary:active,
+.btn-arcade-green:active,
+.btn-clay-mint:active {
+  box-shadow: 0 2px 0 #10666A, 0 4px 8px rgba(22, 139, 145, 0.2);
+  transform: translateY(2px);
+}
+.btn-primary:disabled,
+.btn-arcade-green:disabled,
+.btn-clay-mint:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  filter: grayscale(0.4);
 }
 
-.clay-card-coral {
-  background: linear-gradient(180deg, #FF6B7A 0%, #E03547 100%);
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 20px;
-  box-shadow: 
-    0 8px 20px rgba(224, 53, 71, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+/* Secondary Button: #FFFFFF, #193D5B Text, Rounded, Subtle Blue-Grey Shadow */
+.btn-secondary,
+.btn-clay-secondary {
+  background: #FFFFFF;
+  color: #193D5B;
+  font-family: 'Fredoka', system-ui, sans-serif;
+  font-weight: 600;
+  border-radius: 16px;
+  border: 1px solid #E2ECF2;
+  box-shadow: 0 3px 0 #D0DEE5, 0 6px 12px rgba(25, 61, 91, 0.08);
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+.btn-secondary:hover,
+.btn-clay-secondary:hover {
+  background: #F7FCFE;
+  filter: brightness(1.02);
+}
+.btn-secondary:active,
+.btn-clay-secondary:active {
+  box-shadow: 0 1px 0 #D0DEE5, 0 3px 6px rgba(25, 61, 91, 0.06);
+  transform: translateY(2px);
 }
 
-/* ─── Gamified 3D Arcade Buttons ────────────────────────── */
+/* Dice / Reward Button: #D69C49, White Text, Fredoka Bold, Prominent Raised */
+.btn-dice,
+.btn-reward,
 .btn-clay-gold,
 .btn-arcade-gold {
-  background: linear-gradient(180deg, #FFD23F 0%, #F59E0B 100%);
-  border: none;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.8);
+  background: #D69C49;
+  color: #FFFFFF;
+  font-family: 'Fredoka', system-ui, sans-serif;
+  font-weight: 700;
   border-radius: 16px;
-  box-shadow: 0 5px 0 #B45309, 0 10px 20px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  color: #381A00;
-  font-family: 'Fredoka', cursive, sans-serif;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 0 #A8752B, 0 8px 18px rgba(214, 156, 73, 0.35);
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateY(0);
 }
+.btn-dice:hover,
+.btn-reward:hover,
 .btn-clay-gold:hover,
 .btn-arcade-gold:hover {
-  filter: brightness(1.05);
+  filter: brightness(1.04);
 }
+.btn-dice:active,
+.btn-reward:active,
 .btn-clay-gold:active,
 .btn-arcade-gold:active {
-  box-shadow: 0 2px 0 #B45309, 0 4px 10px rgba(245, 158, 11, 0.3);
-  transform: translateY(3px);
+  box-shadow: 0 2px 0 #A8752B, 0 4px 10px rgba(214, 156, 73, 0.25);
+  transform: translateY(2px);
+}
+.btn-dice:disabled,
+.btn-reward:disabled,
+.btn-clay-gold:disabled,
+.btn-arcade-gold:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  filter: grayscale(0.4);
 }
 
-.btn-clay-mint,
-.btn-arcade-green {
-  background: linear-gradient(180deg, #34D399 0%, #059669 100%);
-  border: none;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.7);
-  border-radius: 16px;
-  box-shadow: 0 5px 0 #045E42, 0 10px 20px rgba(5, 150, 105, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  color: #FFFFFF;
-  font-family: 'Fredoka', cursive, sans-serif;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: translateY(0);
+/* Navigation States: Selected (#DAEDF0 / #168B91) vs Inactive (#F1F5F8 / #668195) */
+.nav-selected {
+  background: #DAEDF0;
+  color: #168B91;
+  font-family: 'Fredoka', system-ui, sans-serif;
+  font-weight: 600;
+  border-radius: 14px;
 }
-.btn-clay-mint:hover,
-.btn-arcade-green:hover {
-  filter: brightness(1.05);
+.nav-inactive {
+  background: #F1F5F8;
+  color: #668195;
+  font-family: 'Fredoka', system-ui, sans-serif;
+  font-weight: 500;
+  border-radius: 14px;
 }
-.btn-clay-mint:active,
-.btn-arcade-green:active {
-  box-shadow: 0 2px 0 #045E42, 0 4px 10px rgba(5, 150, 105, 0.3);
-  transform: translateY(3px);
+
+/* Positive Status: #DDF3EA Background, #207E68 Text */
+.status-positive {
+  background: #DDF3EA;
+  color: #207E68;
+  font-weight: 600;
+  border-radius: 10px;
 }
 
 .btn-clay-coral,
@@ -384,17 +439,17 @@ dialog::backdrop {
 }
 .ticker-scroll { animation: ticker-scroll 20s linear infinite; }
 
-/* ─── Board Tile Color Bands (Exact Solid Figma Ticket Palette) ──────────────── */
-.band-red    { background: #D86672; }
-.band-blue   { background: #619CCC; }
-.band-green  { background: #91B65A; }
-.band-yellow { background: #EDB64D; }
-.band-grey   { background: #A8B7C9; }
-.band-start  { background: #D86672; }
-.band-jail   { background: #788D9E; }
-.band-party  { background: #A96D4E; }
-.band-resort { background: #23877F; }
-.band-uno    { background: #326BA8; }
-.band-chance { background: #EDB64D; }
-.band-custom { background: #74699C; }
-.band-travel { background: #74699C; }
+/* ─── Board Tile Color Bands (Exact Game Palette) ──────────────── */
+.band-red    { background: #D97681; }
+.band-blue   { background: #63A2CF; }
+.band-green  { background: #89B46C; }
+.band-yellow { background: #E2B64D; }
+.band-grey   { background: #A3AFC2; }
+.band-start  { background: #D86A75; }
+.band-jail   { background: #697788; }
+.band-party  { background: #B58567; }
+.band-resort { background: #329E91; }
+.band-uno    { background: #317DB0; }
+.band-chance { background: #D49A45; }
+.band-custom { background: #9781A6; }
+.band-travel { background: #9781A6; }

@@ -83,7 +83,7 @@ export const PropertyCardModal: React.FC<PropertyCardModalProps> = ({
         {/* Floating Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-4 z-30 p-2 bg-slate-900/80 hover:bg-slate-900 text-white rounded-full shadow-lg border border-white/20 transition-all hover:scale-110"
+          className="absolute top-2 right-4 z-30 p-2 bg-[#193D5B] hover:brightness-110 text-white rounded-full shadow-lg border border-white/30 transition-all active:scale-95"
           aria-label="Close"
         >
           <X size={18} />
@@ -94,15 +94,15 @@ export const PropertyCardModal: React.FC<PropertyCardModalProps> = ({
           <PropertyDeedCard space={space} owner={owner} scale={cardScale} />
         </div>
 
-        {/* ── Action Buttons Dock ── */}
+        {/* ── Action Buttons Dock (Clay Card Surface) ── */}
         <div
           style={{ width: `${370 * cardScale}px` }}
-          className="mt-4 space-y-2 bg-[#0F2840] p-3.5 rounded-2xl shadow-2xl border-2 border-white/30"
+          className="mt-3.5 space-y-2 bg-white p-3.5 rounded-2xl shadow-[0_5px_12px_rgba(27,65,99,0.16)] border border-[#DAEDF0]"
         >
           {canBuy && (
             <button
               onClick={onBuy}
-              className="btn-arcade-gold w-full py-3 text-sm flex items-center justify-center gap-2 font-display font-extrabold tracking-wide shadow-xl active:scale-95"
+              className="btn-primary w-full py-3 text-sm flex items-center justify-center gap-2 font-display font-semibold tracking-wide shadow-md active:scale-95"
             >
               <Landmark size={17} />
               BUY SITE — ${space.price?.toLocaleString()}
@@ -112,7 +112,7 @@ export const PropertyCardModal: React.FC<PropertyCardModalProps> = ({
           {canBuildHouse && (
             <button
               onClick={onBuildHouse}
-              className="btn-arcade-green w-full py-2.5 text-xs flex items-center justify-center gap-2 font-display font-extrabold shadow-xl active:scale-95"
+              className="w-full py-2.5 text-xs flex items-center justify-center gap-2 font-display font-semibold bg-[#DDF3EA] text-[#207E68] border border-[#207E68]/30 rounded-[16px] shadow-sm active:scale-95 transition-all"
             >
               <Home size={15} />
               BUILD HOUSE — ${space.houseCost?.toLocaleString()}
@@ -122,7 +122,7 @@ export const PropertyCardModal: React.FC<PropertyCardModalProps> = ({
           {canBuildHotel && (
             <button
               onClick={onBuildHotel}
-              className="btn-arcade-red w-full py-2.5 text-xs flex items-center justify-center gap-2 font-display font-extrabold shadow-xl active:scale-95"
+              className="w-full py-2.5 text-xs flex items-center justify-center gap-2 font-display font-semibold bg-[#D97681] text-white rounded-[16px] shadow-md active:scale-95 transition-all"
             >
               <Building2 size={15} />
               ERECT HOTEL — ${(space.hotelCost ?? space.houseCost)?.toLocaleString()}
@@ -133,7 +133,7 @@ export const PropertyCardModal: React.FC<PropertyCardModalProps> = ({
             {canMortgage && (
               <button
                 onClick={onMortgage}
-                className="btn-arcade-blue flex-1 py-2 text-xs flex items-center justify-center gap-1.5 font-display font-extrabold shadow-md active:scale-95"
+                className="btn-secondary flex-1 py-2 text-xs flex items-center justify-center gap-1.5 font-display font-semibold shadow-sm active:scale-95"
               >
                 <Ban size={13} /> MORTGAGE +${space.mortgage?.toLocaleString()}
               </button>
@@ -142,7 +142,7 @@ export const PropertyCardModal: React.FC<PropertyCardModalProps> = ({
             {canLiftMortgage && (
               <button
                 onClick={onLiftMortgage}
-                className="btn-arcade-purple flex-1 py-2 text-xs flex items-center justify-center gap-1.5 font-display font-extrabold shadow-md active:scale-95"
+                className="btn-secondary flex-1 py-2 text-xs flex items-center justify-center gap-1.5 font-display font-semibold shadow-sm active:scale-95"
               >
                 LIFT −${space.mortgage?.toLocaleString()}
               </button>
@@ -150,7 +150,7 @@ export const PropertyCardModal: React.FC<PropertyCardModalProps> = ({
 
             <button
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl font-game font-bold text-xs text-white bg-white/10 hover:bg-white/20 transition-colors shadow-sm active:scale-95"
+              className="px-5 py-2.5 rounded-[16px] font-game font-semibold text-xs text-[#668195] bg-[#F1F5F8] hover:bg-[#E2ECF2] transition-colors active:scale-95"
             >
               Close
             </button>

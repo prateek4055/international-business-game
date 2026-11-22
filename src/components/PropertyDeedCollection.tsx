@@ -13,11 +13,11 @@ interface PropertyDeedCollectionProps {
 
 const GROUPS = [
   { name: 'All', color: '#193D5A' },
-  { name: 'Red', color: '#D86672' },
-  { name: 'Yellow', color: '#EDB64D' },
-  { name: 'Green', color: '#91B65A' },
-  { name: 'Blue', color: '#619CCC' },
-  { name: 'Utility', color: '#A8B7C9' },
+  { name: 'Red', color: '#D97681' },
+  { name: 'Yellow', color: '#E2B64D' },
+  { name: 'Green', color: '#89B46C' },
+  { name: 'Blue', color: '#63A2CF' },
+  { name: 'Utility', color: '#A3AFC2' },
 ];
 
 export const PropertyDeedCollection: React.FC<PropertyDeedCollectionProps> = ({

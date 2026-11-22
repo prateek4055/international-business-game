@@ -1314,19 +1314,19 @@ export const App: React.FC = () => {
 
       {/* ── Top Navbar ───────────────────────────── */}
       <header
-        className="flex items-center justify-between py-1.5 sm:py-2.5 px-3 sm:px-4 max-w-7xl w-full mx-auto mb-1 sm:mb-2 rounded-xl sm:rounded-2xl shrink-0 bg-gradient-to-b from-[#1C4870] to-[#0E2A44] border-t-2 border-white/35 border-b-[4px] border-[#071625] shadow-2xl"
+        className="flex items-center justify-between py-1.5 sm:py-2.5 px-3 sm:px-4 max-w-7xl w-full mx-auto mb-1 sm:mb-2 rounded-xl sm:rounded-2xl shrink-0 bg-[#193D5B] border border-[#DAEDF0]/20 shadow-clay"
       >
         <div className="flex items-center gap-2">
           <div
-            className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center font-display text-xs sm:text-sm font-extrabold shadow-md shrink-0 bg-gradient-to-b from-[#FFD23F] to-[#F59E0B] border-t border-white/70 border-b-2 border-[#B45309] text-[#381A00]"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center font-display text-xs sm:text-sm font-extrabold shadow-sm shrink-0 bg-[#D69C49] border border-white/60 text-white"
           >
             IB
           </div>
           <div>
-            <span className="font-display text-xs sm:text-sm text-white font-extrabold leading-none tracking-wide drop-shadow-sm">
-              INTERNATIONAL <span className="text-[#FFD23F]">BUSINESS</span>
+            <span className="font-display text-xs sm:text-sm text-white font-extrabold leading-none tracking-wide">
+              INTERNATIONAL <span className="text-[#D69C49]">BUSINESS</span>
             </span>
-            <div className="text-[8px] sm:text-[9px] font-game text-[#34D399] leading-none font-bold mt-0.5">
+            <div className="text-[8px] sm:text-[9px] font-game text-[#C5E7F1] leading-none font-bold mt-0.5">
               ★ Official $25k Cash & $10k Bank Card ★
             </div>
           </div>
@@ -1335,18 +1335,18 @@ export const App: React.FC = () => {
         <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Online Room Badge */}
           {isOnlineSession ? (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-black/40 border border-emerald-400/50 shadow-sm text-xs font-game">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              <span className="font-extrabold text-emerald-300">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#DDF3EA] border border-[#89B46C]/60 shadow-xs text-xs font-game">
+              <span className="w-2 h-2 rounded-full bg-[#207E68] animate-ping" />
+              <span className="font-extrabold text-[#207E68]">
                 {multiplayerManager.getMode() === 'p2p' ? '⚡ P2P (2P)' : '🌐 CLOUD (3-4P)'}
               </span>
-              <span className="text-white/60">|</span>
-              <span className="text-[#FFD23F] font-black">{multiplayerManager.getRoom()?.roomCode || 'LIVE'}</span>
+              <span className="text-[#668195]">|</span>
+              <span className="text-[#193D5B] font-black">{multiplayerManager.getRoom()?.roomCode || 'LIVE'}</span>
             </div>
           ) : (
             <button
               onClick={() => setOnlineModalOpen(true)}
-              className="btn-arcade-green px-2.5 sm:px-3 py-1.5 text-xs flex items-center gap-1.5 shadow-md"
+              className="btn-primary px-2.5 sm:px-3 py-1.5 text-xs flex items-center gap-1.5 shadow-sm"
               title="Play Online with Friends"
             >
               <Users size={14} />
@@ -1356,7 +1356,7 @@ export const App: React.FC = () => {
 
           <button
             onClick={() => setDeedCollectionOpen(true)}
-            className="btn-arcade-gold px-3 py-1.5 text-xs flex items-center gap-1.5 shadow-md"
+            className="btn-secondary px-3 py-1.5 text-xs flex items-center gap-1.5 shadow-sm"
             title="Browse 20 Countries + 6 Utilities Deed Collection"
           >
             <span>📜</span>
@@ -1365,7 +1365,7 @@ export const App: React.FC = () => {
 
           <button
             onClick={toggleSound}
-            className="btn-arcade-blue p-2 rounded-xl text-white shadow-md flex items-center justify-center"
+            className="btn-secondary p-2 rounded-xl shadow-sm flex items-center justify-center text-[#193D5B]"
             title="Toggle Sound"
           >
             {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
@@ -1378,7 +1378,7 @@ export const App: React.FC = () => {
                 setIsOnlineSession(false);
                 setPhase('lobby');
               }}
-              className="btn-arcade-red px-3 py-1.5 text-xs flex items-center gap-1 shadow-md"
+              className="bg-[#FFF0F0] text-[#D97681] border border-[#D97681]/40 px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 shadow-xs font-semibold active:scale-95"
             >
               <RotateCcw size={13} />
               <span className="hidden sm:inline">LOBBY</span>
@@ -1458,12 +1458,7 @@ export const App: React.FC = () => {
               {/* 3D Dice Roller Container (Desktop) */}
               {!isMobile && (
                 <div
-                  className="w-full rounded-2xl overflow-hidden shrink-0"
-                  style={{
-                    background: '#193D5A',
-                    border: '2px solid rgba(255,255,255,0.18)',
-                    boxShadow: '0 8px 24px rgba(10,25,40,0.4), inset 0 1px 0 rgba(255,255,255,0.12)'
-                  }}
+                  className="w-full rounded-2xl overflow-hidden shrink-0 bg-white border border-[#DCEEF4] shadow-clay"
                 >
                   <ThreeDiceRoll
                     ref={diceRef}
@@ -1475,24 +1470,21 @@ export const App: React.FC = () => {
 
               {/* Game Log (Desktop) */}
               <div
-                className="rounded-2xl p-3 flex flex-col overflow-hidden"
+                className="rounded-2xl p-3 flex flex-col overflow-hidden bg-white border border-[#DCEEF4] shadow-clay"
                 style={{
                   height: '160px',
-                  background: '#163D5A',
-                  border: '2px solid rgba(255,255,255,0.18)',
-                  boxShadow: '0 6px 18px rgba(10,25,40,0.35)',
                 }}
               >
-                <div className="font-game font-bold text-[#EDB64D] pb-1.5 mb-1 border-b border-[#23435B] uppercase tracking-widest text-[10px] flex items-center justify-between">
+                <div className="font-game font-bold text-[#168B91] pb-1.5 mb-1 border-b border-[#DCEEF4] uppercase tracking-widest text-[10px] flex items-center justify-between">
                   <span>📜 Live Action History</span>
-                  <span className="text-[9px] text-[#A8B7C9] font-normal">{logs.length} events</span>
+                  <span className="text-[9px] text-[#668195] font-normal">{logs.length} events</span>
                 </div>
-                <div className="flex-1 overflow-y-auto space-y-0.5 font-game text-[10px] text-[#E8F4F7]">
+                <div className="flex-1 overflow-y-auto space-y-0.5 font-game text-[10px] text-[#163650]">
                   {logs.length === 0 ? (
-                    <div className="text-[#A8B7C9] italic">Roll the dice to begin trading...</div>
+                    <div className="text-[#668195] italic">Roll the dice to begin trading...</div>
                   ) : (
                     logs.map((log, i) => (
-                      <div key={i} className="py-0.5 border-b border-[#23435B]/40 last:border-0 leading-relaxed">
+                      <div key={i} className="py-0.5 border-b border-[#DCEEF4]/60 last:border-0 leading-relaxed">
                         {log}
                       </div>
                     ))
@@ -1505,24 +1497,19 @@ export const App: React.FC = () => {
 
         {phase === 'game_over' && (
           <div
-            className="rounded-3xl text-center max-w-md w-full space-y-5 event-pop p-8"
-            style={{
-              background: '#193D5A',
-              border: '3px solid #EDB64D',
-              boxShadow: '0 12px 0 #0E2437, 0 20px 50px rgba(0,0,0,0.6)',
-            }}
+            className="rounded-3xl text-center max-w-md w-full space-y-5 event-pop p-8 bg-white border-2 border-[#DCEEF4] shadow-raised"
           >
             <div className="text-7xl animate-[float_2s_ease-in-out_infinite]">🏆</div>
-            <h2 className="font-display text-4xl text-[#EDB64D] text-glow-gold">GAME OVER!</h2>
-            <div className="font-display text-2xl text-[#91B65A] text-glow-mint">
+            <h2 className="font-display text-4xl text-[#193D5B]">GAME OVER!</h2>
+            <div className="font-display text-2xl text-[#207E68]">
               {winner?.name} Wins!
             </div>
-            <p className="font-game text-sm text-[#E8F4F7]/80">
+            <p className="font-game text-sm text-[#668195]">
               The wealthiest business tycoon in the world!
             </p>
             <button
               onClick={() => setPhase('lobby')}
-              className="btn-clay-gold w-full py-4 font-display text-lg tracking-wide"
+              className="btn-dice w-full py-4 font-display text-lg tracking-wide shadow-md"
             >
               🎮 PLAY AGAIN
             </button>

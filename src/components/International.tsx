@@ -46,118 +46,118 @@ export type BoardCard = {
 };
 
 export const shadow =
-  "shadow-[1px_6px_9px_#1c456349,-2px_-2px_7px_#ffffffaf,inset_-1px_-2px_4px_#ffffffd4,inset_2px_2px_5px_#6b98ac21]";
+  "shadow-[0px_5px_12px_#1b416329,-2px_-2px_6px_#ffffffdf,inset_0px_1px_0px_#ffffff]";
 
 export const verticalCards: BoardCard[] = [
   {
     name: "ITALY",
     image: generatedIllustrationItaly,
-    color: "#D86672",
+    color: "#D97681",
     value: "$3500",
   },
   {
     name: "CHANCE",
     image: generatedIllustrationChance,
-    color: "#EDB64D",
+    color: "#D49A45",
     imageClass: "h-[196px]",
   },
   {
     name: "BRAZIL",
     image: generatedIllustrationBrazil,
-    color: "#EDB64D",
+    color: "#E2B64D",
     value: "$2500",
   },
   {
     name: "SWITZERLAND",
     image: generatedIllustrationSwitzerland,
-    color: "#D86672",
+    color: "#D97681",
     value: "$3500",
     fontSize: "text-xs",
   },
   {
     name: "PETROLEUM",
     image: generatedIllustrationPetroleum,
-    color: "#A8B7C9",
+    color: "#A3AFC2",
     value: "$5500",
     fontSize: "text-[13.5px]",
   },
   {
     name: "CUSTOM DUTY",
     image: generatedIllustrationCustomDuty,
-    color: "#74699C",
+    color: "#9781A6",
     value: "ON ITEMS",
     fontSize: "text-xs",
   },
   {
     name: "AIRWAYS",
     image: generatedIllustrationAirways,
-    color: "#A8B7C9",
+    color: "#A3AFC2",
     value: "$10500",
     fontSize: "text-[15px]",
   },
   {
     name: "GERMANY",
     image: generatedIllustrationGermany,
-    color: "#D86672",
+    color: "#D97681",
     value: "$3500",
     fontSize: "text-[15px]",
   },
   {
     name: "CANADA",
     image: generatedIllustrationCanada,
-    color: "#EDB64D",
+    color: "#E2B64D",
     value: "$4000",
   },
   {
     name: "INDIA",
     image: generatedIllustrationIndia,
-    color: "#619CCC",
+    color: "#63A2CF",
     value: "$4500",
   },
   {
     name: "CHANCE",
     image: generatedIllustrationChance2,
-    color: "#EDB64D",
+    color: "#D49A45",
     imageClass: "h-[196px]",
   },
   {
     name: "SAUDI ARABIA",
     image: generatedIllustrationSaudiArabia,
-    color: "#91B65A",
+    color: "#89B46C",
     value: "$5500",
     fontSize: "text-xs",
   },
   {
     name: "PETROLEUM",
     image: generatedIllustrationPetroleum,
-    color: "#A8B7C9",
+    color: "#A3AFC2",
     value: "$5500",
     fontSize: "text-[13.5px]",
   },
   {
     name: "CHINA",
     image: generatedIllustrationChina,
-    color: "#619CCC",
+    color: "#63A2CF",
     value: "$4500",
   },
   {
     name: "RAILWAYS",
     image: generatedIllustrationRailways,
-    color: "#A8B7C9",
+    color: "#A3AFC2",
     value: "$9500",
     fontSize: "text-[15px]",
   },
   {
     name: "MALAYSIA",
     image: generatedIllustrationMalaysia,
-    color: "#91B65A",
+    color: "#89B46C",
     value: "$1500",
     fontSize: "text-[15px]",
   },
   {
     name: "SINGAPORE",
     image: generatedIllustrationSingapore,
-    color: "#619CCC",
+    color: "#63A2CF",
     value: "$3000",
     fontSize: "text-[13.5px]",
   },
@@ -167,7 +167,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "JAPAN",
     image: generatedIllustrationJapan,
-    color: "#619CCC",
+    color: "#63A2CF",
     value: "$2500",
     top: 288,
     left: 25,
@@ -175,7 +175,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "EGYPT",
     image: generatedIllustrationEgypt,
-    color: "#91B65A",
+    color: "#89B46C",
     value: "$3200",
     top: 288,
     left: 1323,
@@ -183,7 +183,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "USA",
     image: generatedIllustrationUsa,
-    color: "#EDB64D",
+    color: "#E2B64D",
     value: "$8500",
     top: 417,
     left: 25,
@@ -191,7 +191,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "SATELLITE",
     image: generatedIllustrationSatellite,
-    color: "#A8B7C9",
+    color: "#A3AFC2",
     value: "$2000",
     fontSize: "text-[19px]",
     top: 417,
@@ -200,7 +200,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "TRAVELLING DUTY",
     image: generatedIllustrationTravellingDuty,
-    color: "#74699C",
+    color: "#9781A6",
     top: 547,
     left: 25,
     fontSize: "text-base",
@@ -209,7 +209,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "IRAN",
     image: generatedIllustrationIran,
-    color: "#91B65A",
+    color: "#89B46C",
     value: "$2500",
     top: 547,
     left: 1323,
@@ -217,7 +217,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "ROADWAYS",
     image: generatedIllustrationRoadways,
-    color: "#A8B7C9",
+    color: "#A3AFC2",
     value: "$3500",
     top: 676,
     left: 25,
@@ -225,7 +225,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "FRANCE",
     image: generatedIllustrationFrance,
-    color: "#D86672",
+    color: "#D97681",
     value: "$2500",
     top: 676,
     left: 1323,
@@ -233,7 +233,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "MEXICO",
     image: generatedIllustrationMexico,
-    color: "#EDB64D",
+    color: "#E2B64D",
     value: "$4000",
     top: 806,
     left: 25,
@@ -241,7 +241,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "UNO",
     image: generatedIllustrationUno,
-    color: "#326BA8",
+    color: "#317DB0",
     value: "UNITED NATIONS",
     fontSize: "text-[11.2px]",
     top: 806,
@@ -250,7 +250,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "HONGKONG",
     image: generatedIllustrationHongkong,
-    color: "#619CCC",
+    color: "#63A2CF",
     value: "$2000",
     top: 935,
     left: 25,
@@ -258,7 +258,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "WATERWAYS",
     image: generatedIllustrationWaterways,
-    color: "#A8B7C9",
+    color: "#A3AFC2",
     value: "$9500",
     fontSize: "text-[19px]",
     top: 935,
@@ -267,7 +267,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "UNO",
     image,
-    color: "#326BA8",
+    color: "#317DB0",
     value: "UNITED NATIONS",
     fontSize: "text-[11.2px]",
     top: 1064,
@@ -276,7 +276,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "IRAQ",
     image: generatedIllustrationIraq,
-    color: "#91B65A",
+    color: "#89B46C",
     value: "$2500",
     top: 1064,
     left: 1323,
@@ -284,7 +284,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "AUSTRALIA",
     image: generatedIllustrationAustralia,
-    color: "#EDB64D",
+    color: "#E2B64D",
     value: "$3300",
     fontSize: "text-[19px]",
     top: 1194,
@@ -293,7 +293,7 @@ export const sideCards: Array<BoardCard & { top: number; left: number }> = [
   {
     name: "ENGLAND",
     image: generatedIllustrationEngland,
-    color: "#D86672",
+    color: "#D97681",
     value: "$2500",
     top: 1194,
     left: 1323,
@@ -304,7 +304,7 @@ export const rules = [
   {
     title: "UNO",
     subtitle: "ODD ROLL • PAY",
-    color: "#2d7a9b",
+    color: "#317DB0",
     text: [
       "When you arrive on the site of UNO",
       "by an odd number (Such as 3,5,7)",
@@ -320,7 +320,7 @@ export const rules = [
   {
     title: "UNO",
     subtitle: "EVEN ROLL • COLLECT",
-    color: "#2d7a9b",
+    color: "#317DB0",
     text: [
       "When you arrive on the site of UNO",
       "by an even number (Such as 2,4,6)",
@@ -336,7 +336,7 @@ export const rules = [
   {
     title: "CHANCE",
     subtitle: "EVEN ROLL • PAY",
-    color: "#c78a48",
+    color: "#D49A45",
     text: [
       "When you arrive on the site of CHANCE",
       "by an even number (Such as 2,4,6)",
@@ -352,7 +352,7 @@ export const rules = [
   {
     title: "CHANCE",
     subtitle: "ODD ROLL • COLLECT",
-    color: "#c78a48",
+    color: "#D49A45",
     text: [
       "When you arrive on the site of CHANCE",
       "by an odd number (Such as 3,5,7)",
@@ -385,7 +385,7 @@ export const Card = ({
     style={style}
     className={`${
       large ? "w-[252px] h-[252px] rounded-[20px]" : "w-[118px] h-[252px] rounded-[14px]"
-    } absolute bg-[#f8fcff] overflow-hidden border-2 border-solid border-white ${shadow} ${
+    } absolute bg-white overflow-hidden border border-white/90 ${shadow} ${
       onClick ? "cursor-pointer hover:brightness-105 transition-all" : ""
     }`}
     aria-label={card.name}
@@ -402,16 +402,16 @@ export const Card = ({
         large
           ? "top-[7px] left-[7px] w-[238px] h-[46px] rounded-[11px]"
           : "top-[5px] left-[5px] w-[108px] h-10 rounded-[7px]"
-      } shadow-[0px_3px_5px_#142d4344,inset_0px_-1px_3px_#ffffff50]`}
+      } shadow-[0px_3px_5px_#142d4334,inset_0px_-1px_3px_#ffffff50]`}
       style={{ backgroundColor: card.color }}
     />
     <div
-      className={`absolute bg-[#d9b36f] opacity-[0.92] ${
+      className={`absolute bg-[#D69C49] opacity-[0.92] ${
         large ? "top-[53px] left-[7px] w-[238px] h-[3px]" : "top-11 left-[5px] w-[108px] h-0.5"
       }`}
     />
     <div
-      className={`absolute flex items-center justify-center [font-family:'Fredoka-SemiBold',Helvetica] font-semibold text-white text-center tracking-[0] leading-[normal] ${
+      className={`absolute flex items-center justify-center [font-family:'Fredoka',Helvetica] font-semibold text-white text-center tracking-[0] leading-[normal] ${
         large
           ? "top-[9px] left-3 w-[228px] h-[41px] text-[28px]"
           : `top-2 left-[7px] w-[104px] h-[33px] ${card.fontSize || "text-[17px]"}`
@@ -422,14 +422,14 @@ export const Card = ({
     {card.value && (
       <>
         <div
-          className={`absolute bg-[#fff8ec] border border-solid border-[#f0dab6] shadow-[0px_3px_5px_#35516c30,inset_-1px_-2px_3px_#fffffff7] ${
+          className={`absolute bg-[#FFF9EE] border border-solid border-[#F0DAB6] shadow-[0px_2px_4px_#35516c1a,inset_-1px_-1px_2px_#ffffff] ${
             large
               ? "top-52 left-[7px] w-[238px] h-[39px] rounded-[10px]"
               : "top-52 left-[5px] w-[108px] h-[39px] rounded-[7px]"
           }`}
         />
         <div
-          className={`absolute flex items-center justify-center [font-family:'Fredoka-SemiBold',Helvetica] font-semibold text-[#173b55] text-center tracking-[0] leading-[normal] ${
+          className={`absolute flex items-center justify-center [font-family:'Fredoka',Helvetica] font-semibold text-[#163650] text-center tracking-[0] leading-[normal] ${
             large
               ? "top-52 left-[11px] w-[230px] h-[42px] text-[19px]"
               : `top-[209px] left-2 w-[102px] h-[37px] ${
@@ -456,7 +456,7 @@ export const SideCard = ({
 }) => (
   <article
     onClick={onClick}
-    className={`absolute w-[252px] h-[118px] rounded-[14px] bg-[#f8fcff] overflow-hidden border-2 border-solid border-white ${shadow} ${
+    className={`absolute w-[252px] h-[118px] rounded-[14px] bg-white overflow-hidden border border-white/90 ${shadow} ${
       onClick ? "cursor-pointer hover:brightness-105 transition-all" : ""
     }`}
     style={{ top: card.top, left: card.left }}
@@ -468,12 +468,12 @@ export const SideCard = ({
       src={card.image}
     />
     <div
-      className="absolute top-[5px] left-[5px] w-[242px] h-[34px] rounded-[11px] shadow-[0px_3px_5px_#142d4344,inset_0px_-1px_3px_#ffffff50]"
+      className="absolute top-[5px] left-[5px] w-[242px] h-[34px] rounded-[11px] shadow-[0px_3px_5px_#142d4334,inset_0px_-1px_3px_#ffffff50]"
       style={{ backgroundColor: card.color }}
     />
-    <div className="absolute top-[38px] left-[5px] w-[242px] h-0.5 bg-[#d9b36f] opacity-[0.92]" />
+    <div className="absolute top-[38px] left-[5px] w-[242px] h-0.5 bg-[#D69C49] opacity-[0.92]" />
     <div
-      className={`absolute top-[7px] left-[9px] w-[234px] h-[30px] flex items-center justify-center [font-family:'Fredoka-SemiBold',Helvetica] font-semibold text-white text-center tracking-[0] leading-[normal] ${
+      className={`absolute top-[7px] left-[9px] w-[234px] h-[30px] flex items-center justify-center [font-family:'Fredoka',Helvetica] font-semibold text-white text-center tracking-[0] leading-[normal] ${
         card.fontSize || "text-[22px]"
       }`}
     >
@@ -481,9 +481,9 @@ export const SideCard = ({
     </div>
     {card.value && (
       <>
-        <div className="absolute top-[41px] left-[154px] w-[93px] h-[71px] bg-[#fff8ec] rounded-[10px] border border-solid border-[#f0dab6] shadow-[0px_3px_5px_#35516c30,inset_-1px_-2px_3px_#fffffff7]" />
+        <div className="absolute top-[41px] left-[154px] w-[93px] h-[71px] bg-[#FFF9EE] rounded-[10px] border border-solid border-[#F0DAB6] shadow-[0px_2px_4px_#35516c1a,inset_-1px_-1px_2px_#ffffff]" />
         <div
-          className={`absolute top-[43px] left-[157px] w-[87px] h-[67px] flex items-center justify-center [font-family:'Fredoka-SemiBold',Helvetica] font-semibold text-[#173b55] text-center tracking-[0] leading-[normal] ${
+          className={`absolute top-[43px] left-[157px] w-[87px] h-[67px] flex items-center justify-center [font-family:'Fredoka',Helvetica] font-semibold text-[#163650] text-center tracking-[0] leading-[normal] ${
             card.value === "UNITED NATIONS" ? "text-[11.2px]" : "text-[16.5px]"
           }`}
         >
@@ -497,8 +497,8 @@ export const SideCard = ({
 
 export const International = (): JSX.Element => {
   return (
-    <main className="bg-[#6fafcd] w-full min-w-[1600px] min-h-[1600px] relative">
-      <div className="absolute top-3.5 left-3.5 w-[1572px] h-[1572px] bg-[#b7ddeb] rounded-[31px] shadow-[inset_-3px_-4px_15px_#ffffffec,inset_4px_6px_18px_#46789948]" />
+    <main className="bg-[#DCEEF4] w-full min-w-[1600px] min-h-[1600px] relative">
+      <div className="absolute top-3.5 left-3.5 w-[1572px] h-[1572px] bg-[#E9F5F8] rounded-[31px] shadow-[inset_-3px_-4px_15px_#ffffffec,inset_4px_6px_18px_#1b416315]" />
       
       {/* 4 Corners with exact placement */}
       <Card
@@ -506,7 +506,7 @@ export const International = (): JSX.Element => {
         card={{
           name: "PARTY HOUSE",
           image: generatedIllustrationPartyHouse,
-          color: "#A96D4E",
+          color: "#B58567",
         }}
         large
       />
@@ -515,7 +515,7 @@ export const International = (): JSX.Element => {
         card={{
           name: "RESORT",
           image: generatedIllustrationResort,
-          color: "#23877F",
+          color: "#329E91",
         }}
         large
       />
@@ -524,7 +524,7 @@ export const International = (): JSX.Element => {
         card={{
           name: "JAIL",
           image: generatedIllustrationJail,
-          color: "#788D9E",
+          color: "#697788",
         }}
         large
       />
@@ -533,7 +533,7 @@ export const International = (): JSX.Element => {
         card={{
           name: "START",
           image: generatedIllustrationStart,
-          color: "#D86672",
+          color: "#D86A75",
           value: "COLLECT $1500",
         }}
         large

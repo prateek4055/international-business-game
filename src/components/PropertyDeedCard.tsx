@@ -29,16 +29,17 @@ export const PropertyDeedCard: React.FC<PropertyDeedCardProps> = ({
 
   const getHeaderColor = () => {
     switch (space.group) {
-      case 'Red':     return '#D86672';
-      case 'Yellow':  return '#EDB64D';
-      case 'Green':   return '#91B65A';
-      case 'Blue':    return '#619CCC';
-      case 'Utility': return '#A8B7C9';
-      default:        return '#193D5A';
+      case 'Red':     return '#D97681';
+      case 'Yellow':  return '#E2B64D';
+      case 'Green':   return '#89B46C';
+      case 'Blue':    return '#63A2CF';
+      case 'Utility': return '#A3AFC2';
+      default:        return '#193D5B';
     }
   };
 
   const headerColor = getHeaderColor();
+  const isLightHeader = space.group === 'Yellow' || space.group === 'Green';
 
   // If a scale is explicitly provided and not 1, we wrap with transform
   const hasScale = scale !== undefined && scale !== 1;
@@ -48,12 +49,12 @@ export const PropertyDeedCard: React.FC<PropertyDeedCardProps> = ({
       onClick={onClick}
       aria-label={`${space.name} Property Deed`}
       style={{
-        background: '#F7FCFF',
+        background: '#FFFFFF',
         boxShadow:
           '0px 14px 22px rgba(21, 59, 90, 0.235), inset -2px -2px 4px rgba(255, 255, 255, 0.75)',
         fontFamily: "'Fredoka', cursive, sans-serif",
       }}
-      className={`relative w-full max-w-[370px] rounded-[23px] overflow-hidden border border-white/80 select-none flex flex-col transition-shadow ${
+      className={`relative w-full max-w-[370px] rounded-[23px] overflow-hidden border border-white/90 select-none flex flex-col transition-shadow ${
         onClick ? 'cursor-pointer hover:shadow-2xl hover:brightness-[1.02]' : ''
       }`}
     >
@@ -67,13 +68,17 @@ export const PropertyDeedCard: React.FC<PropertyDeedCardProps> = ({
 
         {/* Top Header Row: Category Badge + Price Coin */}
         <div className="relative z-10 flex items-center justify-between gap-2 min-h-[26px]">
-          <span className="font-semibold text-[11px] sm:text-xs text-[#243A4C] uppercase tracking-wider truncate">
+          <span
+            className={`font-semibold text-[11px] sm:text-xs uppercase tracking-wider truncate ${
+              isLightHeader ? 'text-[#193D5B]/85' : 'text-white/90'
+            }`}
+          >
             {isUtility ? 'TRANSPORT / UTILITY' : `PROPERTY DEED  •  ${space.group}`}
           </span>
 
           {space.price && (
-            <div className="bg-white/95 backdrop-blur-sm rounded-[12px] px-2.5 py-0.5 shadow-sm flex items-center justify-center shrink-0 border border-black/5">
-              <span className="font-bold text-xs sm:text-sm text-[#163D5A] leading-none">
+            <div className="bg-[#FFF9EE] rounded-[12px] px-2.5 py-0.5 shadow-sm flex items-center justify-center shrink-0 border border-[#F0DAB6]">
+              <span className="font-bold text-xs sm:text-sm text-[#163650] leading-none">
                 ${space.price.toLocaleString()}
               </span>
             </div>
@@ -81,13 +86,21 @@ export const PropertyDeedCard: React.FC<PropertyDeedCardProps> = ({
         </div>
 
         {/* Country / Space Name */}
-        <div className="relative z-10 font-bold text-xl sm:text-[23px] text-[#183C5A] uppercase tracking-wide leading-tight truncate">
+        <div
+          className={`relative z-10 font-bold text-xl sm:text-[23px] uppercase tracking-wide leading-tight truncate ${
+            isLightHeader ? 'text-[#193D5B]' : 'text-white'
+          }`}
+        >
           {space.name}
         </div>
 
         {/* Location (Capital & Currency) */}
         {space.capital && (
-          <div className="relative z-10 font-medium text-[11px] sm:text-xs text-[#244A63] uppercase truncate">
+          <div
+            className={`relative z-10 font-medium text-[11px] sm:text-xs uppercase truncate ${
+              isLightHeader ? 'text-[#193D5B]/80' : 'text-white/80'
+            }`}
+          >
             {space.capital} • {space.currency}
           </div>
         )}
@@ -152,17 +165,21 @@ export const PropertyDeedCard: React.FC<PropertyDeedCardProps> = ({
                 ].map((row, i) => (
                   <div
                     key={i}
-                    style={{ backgroundColor: row.isHotel ? '#E5F4F2' : '#F2F6FA' }}
+                    style={{ backgroundColor: row.isHotel ? '#E2F4F0' : i % 2 === 1 ? '#E7F0F6' : '#FFFFFF' }}
                     className="flex items-center justify-between px-2.5 py-1 rounded-[8px] min-h-[25px]"
                   >
                     <span
                       className={`text-[11px] sm:text-xs ${
-                        row.isHotel ? 'font-semibold text-[#185949]' : 'font-medium text-[#22425D]'
+                        row.isHotel ? 'font-semibold text-[#246D62]' : 'font-medium text-[#163650]'
                       }`}
                     >
                       {row.label}
                     </span>
-                    <span className="font-semibold text-xs sm:text-sm text-[#143F62]">
+                    <span
+                      className={`font-semibold text-xs sm:text-sm ${
+                        row.isHotel ? 'text-[#246D62]' : 'text-[#163650]'
+                      }`}
+                    >
                       ${row.value.toLocaleString()}
                     </span>
                   </div>
@@ -171,29 +188,29 @@ export const PropertyDeedCard: React.FC<PropertyDeedCardProps> = ({
             </div>
 
             {/* Build Cost Panel */}
-            <div className="bg-[#F3F5FA] rounded-[11px] px-2.5 py-1.5 border border-slate-100">
-              <div className="font-bold text-[9px] sm:text-[10px] text-[#58738C] uppercase tracking-wider mb-0.5">
+            <div className="bg-[#E2F4F0] rounded-[11px] px-2.5 py-1.5 border border-[#168B91]/20">
+              <div className="font-bold text-[9px] sm:text-[10px] text-[#246D62] uppercase tracking-wider mb-0.5">
                 BUILD COST
               </div>
-              <div className="flex items-center justify-between text-[11px] sm:text-xs font-semibold text-[#1F4560]">
+              <div className="flex items-center justify-between text-[11px] sm:text-xs font-semibold text-[#246D62]">
                 <span>House: ${space.houseCost?.toLocaleString()}</span>
                 <span>Hotel: ${(space.hotelCost ?? space.houseCost)?.toLocaleString()}</span>
               </div>
             </div>
 
             {/* Bank Mortgage Panel */}
-            <div className="bg-[#FFEED8] rounded-[11px] px-2.5 py-1.5 flex items-center justify-between border border-amber-100/60">
-              <span className="font-semibold text-[10px] sm:text-[11px] text-[#91672F] uppercase tracking-wider">
+            <div className="bg-[#FFF0D6] rounded-[11px] px-2.5 py-1.5 flex items-center justify-between border border-[#92723E]/20">
+              <span className="font-semibold text-[10px] sm:text-[11px] text-[#92723E] uppercase tracking-wider">
                 BANK MORTGAGE
               </span>
-              <span className="font-bold text-sm sm:text-base text-[#785529]">
+              <span className="font-bold text-sm sm:text-base text-[#6E5735]">
                 ${space.mortgage?.toLocaleString()}
               </span>
             </div>
 
             {/* 3-Property Bonus Ribbon */}
-            <div className="bg-[#E5F4EA] rounded-[11px] px-2.5 py-1.5 border border-emerald-100/60 flex items-center">
-              <span className="font-semibold text-[11px] sm:text-xs text-[#27755D] leading-tight">
+            <div className="bg-[#E1F4ED] rounded-[11px] px-2.5 py-1.5 border border-[#26766E]/20 flex items-center">
+              <span className="font-semibold text-[11px] sm:text-xs text-[#26766E] leading-tight">
                 ⭐ 3 same-colour sites → 2× BASE RENT
               </span>
             </div>
@@ -202,36 +219,36 @@ export const PropertyDeedCard: React.FC<PropertyDeedCardProps> = ({
           /* ── Utility Layout ── */
           <>
             <div>
-              <div className="font-bold text-sm sm:text-base text-[#1C445F] tracking-wide mb-1.5 px-0.5">
+              <div className="font-bold text-sm sm:text-base text-[#163650] tracking-wide mb-1.5 px-0.5">
                 PASSIVE INCOME
               </div>
 
               {/* Base Rent Panel */}
-              <div className="bg-[#E8F4FA] rounded-[14px] p-2.5 border border-sky-100/80 mb-2">
-                <div className="font-semibold text-[10px] text-[#58738C] uppercase tracking-wider">
+              <div className="bg-[#E7F0F6] rounded-[14px] p-2.5 border border-sky-100/80 mb-2">
+                <div className="font-semibold text-[10px] text-[#668195] uppercase tracking-wider">
                   BASE RENT
                 </div>
-                <div className="font-bold text-xl sm:text-2xl text-[#173D5A] mt-0.5">
+                <div className="font-bold text-xl sm:text-2xl text-[#163650] mt-0.5">
                   ${space.baseRent?.toLocaleString()}
                 </div>
               </div>
 
               {/* Pair Bonus Panel */}
-              <div className="bg-[#E1F3EE] rounded-[14px] p-2.5 border border-emerald-100/80 mb-2">
-                <div className="font-semibold text-[10px] text-[#287663] uppercase tracking-wider">
+              <div className="bg-[#E1F4ED] rounded-[14px] p-2.5 border border-emerald-100/80 mb-2">
+                <div className="font-semibold text-[10px] text-[#26766E] uppercase tracking-wider">
                   PAIR OWNERSHIP BONUS
                 </div>
-                <div className="font-semibold text-xs sm:text-sm text-[#1D6558] mt-0.5">
+                <div className="font-semibold text-xs sm:text-sm text-[#26766E] mt-0.5">
                   Both owned → ${space.pairedRent?.toLocaleString()} RENT
                 </div>
               </div>
 
               {/* Mortgage Panel */}
-              <div className="bg-[#FFEBD8] rounded-[13px] p-2.5 border border-amber-100/80">
-                <div className="font-medium text-[10px] text-[#9A6E43] uppercase tracking-wider">
+              <div className="bg-[#FFF0D6] rounded-[13px] p-2.5 border border-[#92723E]/20">
+                <div className="font-medium text-[10px] text-[#92723E] uppercase tracking-wider">
                   BANK MORTGAGE VALUE
                 </div>
-                <div className="font-bold text-lg sm:text-xl text-[#805E37] mt-0.5">
+                <div className="font-bold text-lg sm:text-xl text-[#6E5735] mt-0.5">
                   ${space.mortgage?.toLocaleString()}
                 </div>
               </div>

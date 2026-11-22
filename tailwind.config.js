@@ -8,11 +8,55 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['Fredoka One', 'cursive'],
-        game: ['Baloo 2', 'cursive'],
-        body: ['Nunito', 'sans-serif'],
+        display: ['Fredoka', 'system-ui', 'sans-serif'],
+        fredoka: ['Fredoka', 'system-ui', 'sans-serif'],
+        game: ['Fredoka', 'system-ui', 'sans-serif'],
+        body: ['Outfit', 'sans-serif'],
+        outfit: ['Outfit', 'sans-serif'],
       },
       colors: {
+        game: {
+          navy: '#193D5B',
+          bg: '#E9F5F8',
+          card: '#FFFFFF',
+          teal: '#168B91',
+          gold: '#D69C49',
+          dark: '#163650',
+          muted: '#668195',
+          subtitle: '#C5E7F1',
+          selected: '#DAEDF0',
+          inactive: '#F1F5F8',
+          secondaryBoard: '#DCEEF4',
+          positiveBg: '#DDF3EA',
+          positiveText: '#207E68',
+        },
+        country: {
+          red: '#D97681',
+          yellow: '#E2B64D',
+          green: '#89B46C',
+          blue: '#63A2CF',
+          utility: '#A3AFC2',
+        },
+        event: {
+          uno: '#317DB0',
+          chance: '#D49A45',
+          start: '#D86A75',
+          jail: '#697788',
+          party: '#B58567',
+          resort: '#329E91',
+          duty: '#9781A6',
+        },
+        ticket: {
+          priceSurface: '#FFF9EE',
+          altRow: '#E7F0F6',
+          devSurface: '#E2F4F0',
+          devText: '#246D62',
+          mortgageSurface: '#FFF0D6',
+          mortgageLabel: '#92723E',
+          mortgageValue: '#6E5735',
+          bonusSurface: '#E1F4ED',
+          bonusText: '#26766E',
+        },
         "business-game-ticket-colors-group-blue":
           "var(--business-game-ticket-colors-group-blue)",
         "business-game-ticket-colors-group-green":

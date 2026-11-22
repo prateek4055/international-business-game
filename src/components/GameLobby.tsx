@@ -58,27 +58,27 @@ export const GameLobby: React.FC<GameLobbyProps> = ({ onStartGame, onOpenOnlineR
     <div className="relative z-10 w-full max-w-lg mx-auto px-4 py-3 sm:py-8 flex flex-col items-center gap-3.5 sm:gap-6 select-none">
       {/* ── Title Block ─────────────────────────── */}
       <div className="text-center animate-[slide-up_0.5s_ease-out]">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDB64D]/20 border border-[#EDB64D]/50 text-[#EDB64D] text-[11px] font-game font-bold tracking-widest uppercase mb-1.5 shadow-sm">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DAEDF0] border border-[#168B91]/40 text-[#168B91] text-[11px] font-game font-bold tracking-widest uppercase mb-1.5 shadow-sm">
           <Trophy size={12} />
           <span>International Board Game</span>
           <Trophy size={12} />
         </div>
 
-        <h1 className="font-display text-4xl sm:text-6xl leading-none tracking-wide text-white drop-shadow-2xl">
+        <h1 className="font-display text-4xl sm:text-6xl leading-none tracking-wide text-[#193D5B] drop-shadow-sm">
           INTERNATIONAL
         </h1>
-        <h1 className="font-display text-4xl sm:text-6xl leading-none tracking-wide text-[#EDB64D] text-glow-gold drop-shadow-2xl -mt-1 sm:-mt-2">
+        <h1 className="font-display text-4xl sm:text-6xl leading-none tracking-wide text-[#D69C49] drop-shadow-sm -mt-1 sm:-mt-2">
           BUSINESS
         </h1>
-        <p className="text-xs sm:text-sm font-game text-[#A8B7C9] mt-1.5 sm:mt-3">
+        <p className="text-xs sm:text-sm font-game text-[#668195] mt-1.5 sm:mt-2">
           🌍 Buy • Sell • Trade • Dominate the World 🌏
         </p>
       </div>
 
       {/* ── Mode Selection Switcher ────────────────── */}
-      <div className="w-full flex bg-[#10273D] p-1.5 rounded-2xl border-2 border-[#1E4D78] shadow-lg">
+      <div className="w-full flex bg-[#F1F5F8] p-1.5 rounded-2xl border border-[#DAEDF0] shadow-sm">
         <button
-          className="flex-1 py-2.5 rounded-xl font-display text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-gradient-to-b from-[#1C4870] to-[#0E2A44] border-t border-white/30 text-white shadow"
+          className="flex-1 py-2.5 rounded-xl font-display text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 bg-[#DAEDF0] text-[#168B91] shadow-sm transition-all"
         >
           <span>🎮 PASS & PLAY / BOTS</span>
         </button>
@@ -86,37 +86,37 @@ export const GameLobby: React.FC<GameLobbyProps> = ({ onStartGame, onOpenOnlineR
         {onOpenOnlineRoom && (
           <button
             onClick={onOpenOnlineRoom}
-            className="flex-1 py-2.5 rounded-xl font-display text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-[#EDB64D] hover:bg-white/5 transition-all"
+            className="flex-1 py-2.5 rounded-xl font-display text-xs sm:text-sm font-medium flex items-center justify-center gap-2 text-[#668195] hover:text-[#168B91] hover:bg-white/50 transition-all"
           >
             <span>🌐 PLAY WITH FRIENDS</span>
-            <span className="text-[9px] bg-emerald-500/20 text-emerald-300 font-extrabold px-1.5 py-0.5 rounded border border-emerald-500/40">
+            <span className="text-[9px] bg-[#DDF3EA] text-[#207E68] font-bold px-1.5 py-0.5 rounded border border-[#207E68]/30">
               FREE
             </span>
           </button>
         )}
       </div>
 
-      {/* ── Main Setup Card (Ticket Navy #193D5A) ─────────────────────── */}
+      {/* ── Main Setup Card (Clay White Card #FFFFFF) ─────────────────────── */}
       <div className="clay-card w-full p-4 sm:p-5 space-y-3.5 sm:space-y-5">
 
         {/* Player Count */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <span className="font-game font-bold text-[#E8F4F7] text-sm flex items-center gap-2">
-              <Users size={16} className="text-[#A8B7C9]" />
+            <span className="font-game font-bold text-[#163650] text-sm flex items-center gap-2">
+              <Users size={16} className="text-[#668195]" />
               Players
             </span>
-            <span className="font-display text-[#EDB64D] text-lg">{playerCount} Players</span>
+            <span className="font-display text-[#D69C49] text-lg font-bold">{playerCount} Players</span>
           </div>
           <div className="grid grid-cols-5 gap-2">
             {[2, 3, 4, 5, 6].map((num) => (
               <button
                 key={num}
                 onClick={() => setPlayerCount(num)}
-                className={`py-2.5 rounded-2xl font-display text-xl transition-all active:translate-y-1 ${
+                className={`py-2.5 rounded-2xl font-display text-xl transition-all active:translate-y-0.5 ${
                   playerCount === num
-                    ? 'btn-arcade-gold'
-                    : 'bg-[#10273D] text-[#A8B7C9] border-2 border-[#1E4D78] hover:border-[#38BDF8]/50'
+                    ? 'btn-dice'
+                    : 'bg-[#F1F5F8] text-[#668195] border border-[#E2ECF2] hover:bg-[#DAEDF0] hover:text-[#168B91]'
                 }`}
               >
                 {num}
@@ -127,19 +127,19 @@ export const GameLobby: React.FC<GameLobbyProps> = ({ onStartGame, onOpenOnlineR
 
         {/* Player Slots */}
         <div className="space-y-2.5">
-          <span className="font-game font-bold text-[#A8B7C9] text-xs uppercase tracking-wider">Player Lineup</span>
+          <span className="font-game font-bold text-[#668195] text-xs uppercase tracking-wider">Player Lineup</span>
           {Array.from({ length: playerCount }).map((_, i) => {
             const p = players[i];
             const color = GAME_CONSTANTS.PLAYER_COLORS[p.colorIndex % GAME_CONSTANTS.PLAYER_COLORS.length];
             return (
               <div
                 key={i}
-                className="flex items-center gap-2.5 bg-[#163D5A] border border-[#23435B] rounded-2xl p-2.5"
+                className="flex items-center gap-2.5 bg-[#F1F5F8] border border-[#E2ECF2] rounded-2xl p-2.5 shadow-sm"
               >
                 {/* Avatar */}
                 <div
-                  className="w-10 h-10 rounded-2xl flex items-center justify-center font-display text-lg text-white border-2 border-white/30 shrink-0 shadow-sm"
-                  style={{ backgroundColor: color.hex, boxShadow: `0 3px 0 rgba(0,0,0,0.3), 0 0 12px ${color.hex}66` }}
+                  className="w-10 h-10 rounded-2xl flex items-center justify-center font-display text-lg text-white border border-white/60 shrink-0 shadow-sm"
+                  style={{ backgroundColor: color.hex }}
                 >
                   {i + 1}
                 </div>
@@ -149,17 +149,17 @@ export const GameLobby: React.FC<GameLobbyProps> = ({ onStartGame, onOpenOnlineR
                   type="text"
                   value={p.name}
                   onChange={(e) => updatePlayerName(i, e.target.value)}
-                  className="flex-1 bg-[#10273D] border border-[#23435B] rounded-xl px-3 py-1.5 text-sm font-game font-bold text-white placeholder-[#A8B7C9]/60 focus:outline-none focus:border-[#EDB64D] focus:bg-[#122E47] transition-all"
+                  className="flex-1 bg-white border border-[#E2ECF2] rounded-xl px-3 py-1.5 text-sm font-game font-bold text-[#163650] placeholder-[#668195]/60 focus:outline-none focus:border-[#168B91] focus:ring-2 focus:ring-[#168B91]/20 transition-all"
                   placeholder={`Player ${i + 1}`}
                 />
 
                 {/* AI Toggle */}
                 <button
                   onClick={() => togglePlayerAI(i)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-game font-bold flex items-center gap-1.5 transition-all border-2 ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-game font-bold flex items-center gap-1.5 transition-all border ${
                     p.isAI
-                      ? 'bg-[#619CCC]/20 text-[#619CCC] border-[#619CCC]/50'
-                      : 'bg-[#91B65A]/20 text-[#91B65A] border-[#91B65A]/50'
+                      ? 'bg-[#DAEDF0] text-[#168B91] border-[#168B91]/40'
+                      : 'bg-[#DDF3EA] text-[#207E68] border-[#207E68]/40'
                   }`}
                 >
                   {p.isAI ? <Bot size={13} /> : <User size={13} />}
@@ -171,16 +171,16 @@ export const GameLobby: React.FC<GameLobbyProps> = ({ onStartGame, onOpenOnlineR
         </div>
 
         {/* Game Mode */}
-        <div className="bg-[#163D5A] border border-[#23435B] rounded-2xl p-3.5 space-y-3">
+        <div className="bg-[#F1F5F8] border border-[#E2ECF2] rounded-2xl p-3.5 space-y-3">
           <label className="flex items-center justify-between cursor-pointer">
-            <span className="font-game font-bold text-[#E8F4F7] text-sm flex items-center gap-2">
-              <Clock size={15} className="text-[#EDB64D]" />
+            <span className="font-game font-bold text-[#163650] text-sm flex items-center gap-2">
+              <Clock size={15} className="text-[#D69C49]" />
               Shorter Timed Game
             </span>
             <div
               onClick={() => setIsShortGame(!isShortGame)}
-              className={`w-12 h-6 rounded-full relative transition-all cursor-pointer border-2 ${
-                isShortGame ? 'bg-[#EDB64D] border-[#C98F26]' : 'bg-[#10273D] border-[#23435B]'
+              className={`w-12 h-6 rounded-full relative transition-all cursor-pointer border ${
+                isShortGame ? 'bg-[#D69C49] border-[#A8752B]' : 'bg-[#E2ECF2] border-[#D0DEE5]'
               }`}
             >
               <div
@@ -192,8 +192,8 @@ export const GameLobby: React.FC<GameLobbyProps> = ({ onStartGame, onOpenOnlineR
           </label>
 
           {isShortGame && (
-            <div className="pt-2 border-t border-[#23435B] flex items-center justify-between gap-2">
-              <span className="text-xs font-game text-[#A8B7C9]">Time Limit:</span>
+            <div className="pt-2 border-t border-[#E2ECF2] flex items-center justify-between gap-2">
+              <span className="text-xs font-game text-[#668195]">Time Limit:</span>
               <div className="flex gap-1.5">
                 {[15, 30, 45, 60].map((m) => (
                   <button
@@ -201,8 +201,8 @@ export const GameLobby: React.FC<GameLobbyProps> = ({ onStartGame, onOpenOnlineR
                     onClick={() => setTimerMinutes(m)}
                     className={`px-2.5 py-1 rounded-xl text-xs font-game font-bold transition-all ${
                       timerMinutes === m
-                        ? 'btn-clay-gold'
-                        : 'bg-[#10273D] text-[#A8B7C9] hover:bg-[#122E47]'
+                        ? 'btn-dice'
+                        : 'bg-white text-[#668195] border border-[#E2ECF2] hover:bg-[#DAEDF0]'
                     }`}
                   >
                     {m}m
@@ -217,7 +217,7 @@ export const GameLobby: React.FC<GameLobbyProps> = ({ onStartGame, onOpenOnlineR
       {/* ── Start Button ────────────────────────── */}
       <button
         onClick={handleStart}
-        className="btn-arcade-gold w-full py-4 text-xl sm:text-2xl font-display font-extrabold tracking-wider flex items-center justify-center gap-3 shadow-2xl active:scale-95"
+        className="btn-dice w-full py-3.5 sm:py-4 text-xl sm:text-2xl font-display font-bold tracking-wider flex items-center justify-center gap-3 shadow-lg active:scale-95"
       >
         <Zap size={22} className="fill-current" />
         START PASS & PLAY / BOTS!
@@ -228,7 +228,7 @@ export const GameLobby: React.FC<GameLobbyProps> = ({ onStartGame, onOpenOnlineR
       {onOpenOnlineRoom && (
         <button
           onClick={onOpenOnlineRoom}
-          className="btn-arcade-green w-full py-3.5 text-base sm:text-lg font-display font-extrabold tracking-wide flex items-center justify-center gap-2 shadow-xl"
+          className="btn-primary w-full py-3 sm:py-3.5 text-base sm:text-lg font-display font-semibold tracking-wide flex items-center justify-center gap-2 shadow-md active:scale-95"
         >
           <span>🌐</span>
           <span>PLAY WITH FRIENDS ONLINE (ROOM CODE)</span>
@@ -237,20 +237,20 @@ export const GameLobby: React.FC<GameLobbyProps> = ({ onStartGame, onOpenOnlineR
       )}
 
       {/* ── Official Starting Kit Notice ──────────────────────────────── */}
-      <div className="w-full bg-[#163D5A] border border-[#23435B] rounded-2xl p-3 text-center space-y-1">
-        <div className="text-[11px] font-display text-[#EDB64D] uppercase tracking-widest">
+      <div className="w-full bg-[#DCEEF4] border border-[#DAEDF0] rounded-2xl p-3 text-center space-y-1 shadow-sm">
+        <div className="text-[11px] font-display text-[#193D5B] uppercase tracking-widest font-bold">
           ★ Official Starting Kit Per Player ★
         </div>
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs font-game text-[#E8F4F7]">
-          <span className="flex items-center gap-1 font-bold text-[#91B65A]">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs font-game text-[#163650]">
+          <span className="flex items-center gap-1 font-bold text-[#207E68]">
             💵 $25,000 Cash
           </span>
-          <span className="text-[#A8B7C9]">•</span>
-          <span className="flex items-center gap-1 font-bold text-[#EDB64D]">
+          <span className="text-[#668195]">•</span>
+          <span className="flex items-center gap-1 font-bold text-[#D69C49]">
             💳 $10,000 Bank Card
           </span>
-          <span className="text-[#A8B7C9]">•</span>
-          <span className="flex items-center gap-1 font-bold text-[#619CCC]">
+          <span className="text-[#668195]">•</span>
+          <span className="flex items-center gap-1 font-bold text-[#168B91]">
             🛂 1 Travel Passport
           </span>
         </div>

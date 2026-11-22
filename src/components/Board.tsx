@@ -55,77 +55,77 @@ interface BoardSpaceConfig {
 
 const SPACES_CONFIG: BoardSpaceConfig[] = [
   // 0: START
-  { index: 0, top: 1323, left: 1323, isLarge: true, card: { name: "START", image: generatedIllustrationStart, color: "#D86672", value: "COLLECT $1500" } },
+  { index: 0, top: 1323, left: 1323, isLarge: true, card: { name: "START", image: generatedIllustrationStart, color: "#D86A75", value: "COLLECT $1500" } },
   // 1: ENGLAND (Red)
-  { index: 1, top: 1194, left: 1323, isSide: true, card: { name: "ENGLAND", image: generatedIllustrationEngland, color: "#D86672", value: "$2500" } },
+  { index: 1, top: 1194, left: 1323, isSide: true, card: { name: "ENGLAND", image: generatedIllustrationEngland, color: "#D97681", value: "$2500" } },
   // 2: IRAQ (Green)
-  { index: 2, top: 1064, left: 1323, isSide: true, card: { name: "IRAQ", image: generatedIllustrationIraq, color: "#91B65A", value: "$2500" } },
+  { index: 2, top: 1064, left: 1323, isSide: true, card: { name: "IRAQ", image: generatedIllustrationIraq, color: "#89B46C", value: "$2500" } },
   // 3: WATERWAYS (Utility)
-  { index: 3, top: 935, left: 1323, isSide: true, card: { name: "WATERWAYS", image: generatedIllustrationWaterways, color: "#A8B7C9", value: "$9500", fontSize: "text-[19px]" } },
+  { index: 3, top: 935, left: 1323, isSide: true, card: { name: "WATERWAYS", image: generatedIllustrationWaterways, color: "#A3AFC2", value: "$9500", fontSize: "text-[19px]" } },
   // 4: UNO (Special)
-  { index: 4, top: 806, left: 1323, isSide: true, card: { name: "UNO", image: generatedIllustrationUno, color: "#326BA8", value: "UNITED NATIONS", fontSize: "text-[11.2px]" } },
+  { index: 4, top: 806, left: 1323, isSide: true, card: { name: "UNO", image: generatedIllustrationUno, color: "#317DB0", value: "UNITED NATIONS", fontSize: "text-[11.2px]" } },
   // 5: FRANCE (Red)
-  { index: 5, top: 676, left: 1323, isSide: true, card: { name: "FRANCE", image: generatedIllustrationFrance, color: "#D86672", value: "$2500" } },
+  { index: 5, top: 676, left: 1323, isSide: true, card: { name: "FRANCE", image: generatedIllustrationFrance, color: "#D97681", value: "$2500" } },
   // 6: IRAN (Green)
-  { index: 6, top: 547, left: 1323, isSide: true, card: { name: "IRAN", image: generatedIllustrationIran, color: "#91B65A", value: "$2500" } },
+  { index: 6, top: 547, left: 1323, isSide: true, card: { name: "IRAN", image: generatedIllustrationIran, color: "#89B46C", value: "$2500" } },
   // 7: SATELLITE (Utility)
-  { index: 7, top: 417, left: 1323, isSide: true, card: { name: "SATELLITE", image: generatedIllustrationSatellite, color: "#A8B7C9", value: "$2000", fontSize: "text-[19px]" } },
+  { index: 7, top: 417, left: 1323, isSide: true, card: { name: "SATELLITE", image: generatedIllustrationSatellite, color: "#A3AFC2", value: "$2000", fontSize: "text-[19px]" } },
   // 8: EGYPT (Green)
-  { index: 8, top: 288, left: 1323, isSide: true, card: { name: "EGYPT", image: generatedIllustrationEgypt, color: "#91B65A", value: "$3200" } },
+  { index: 8, top: 288, left: 1323, isSide: true, card: { name: "EGYPT", image: generatedIllustrationEgypt, color: "#89B46C", value: "$3200" } },
   // 9: RESORT (Special)
-  { index: 9, top: 25, left: 1323, isLarge: true, card: { name: "RESORT", image: generatedIllustrationResort, color: "#23877F" } },
+  { index: 9, top: 25, left: 1323, isLarge: true, card: { name: "RESORT", image: generatedIllustrationResort, color: "#329E91" } },
   // 10: CANADA (Yellow)
-  { index: 10, top: 25, left: 1194, card: { name: "CANADA", image: generatedIllustrationCanada, color: "#EDB64D", value: "$4000" } },
+  { index: 10, top: 25, left: 1194, card: { name: "CANADA", image: generatedIllustrationCanada, color: "#E2B64D", value: "$4000" } },
   // 11: GERMANY (Red)
-  { index: 11, top: 25, left: 1064, card: { name: "GERMANY", image: generatedIllustrationGermany, color: "#D86672", value: "$3500", fontSize: "text-[15px]" } },
+  { index: 11, top: 25, left: 1064, card: { name: "GERMANY", image: generatedIllustrationGermany, color: "#D97681", value: "$3500", fontSize: "text-[15px]" } },
   // 12: AIRWAYS (Utility)
-  { index: 12, top: 25, left: 935, card: { name: "AIRWAYS", image: generatedIllustrationAirways, color: "#A8B7C9", value: "$10500", fontSize: "text-[15px]" } },
+  { index: 12, top: 25, left: 935, card: { name: "AIRWAYS", image: generatedIllustrationAirways, color: "#A3AFC2", value: "$10500", fontSize: "text-[15px]" } },
   // 13: CUSTOM DUTY (Special)
-  { index: 13, top: 25, left: 806, card: { name: "CUSTOM DUTY", image: generatedIllustrationCustomDuty, color: "#74699C", value: "ON ITEMS", fontSize: "text-xs" } },
+  { index: 13, top: 25, left: 806, card: { name: "CUSTOM DUTY", image: generatedIllustrationCustomDuty, color: "#9781A6", value: "ON ITEMS", fontSize: "text-xs" } },
   // 14: SWITZERLAND (Red)
-  { index: 14, top: 25, left: 676, card: { name: "SWITZERLAND", image: generatedIllustrationSwitzerland, color: "#D86672", value: "$3500", fontSize: "text-xs" } },
+  { index: 14, top: 25, left: 676, card: { name: "SWITZERLAND", image: generatedIllustrationSwitzerland, color: "#D97681", value: "$3500", fontSize: "text-xs" } },
   // 15: BRAZIL (Yellow)
-  { index: 15, top: 25, left: 547, card: { name: "BRAZIL", image: generatedIllustrationBrazil, color: "#EDB64D", value: "$2500" } },
+  { index: 15, top: 25, left: 547, card: { name: "BRAZIL", image: generatedIllustrationBrazil, color: "#E2B64D", value: "$2500" } },
   // 16: CHANCE (Special)
-  { index: 16, top: 25, left: 417, card: { name: "CHANCE", image: generatedIllustrationChance, color: "#EDB64D", imageClass: "h-[196px]" } },
+  { index: 16, top: 25, left: 417, card: { name: "CHANCE", image: generatedIllustrationChance, color: "#D49A45", imageClass: "h-[196px]" } },
   // 17: ITALY (Red)
-  { index: 17, top: 25, left: 288, card: { name: "ITALY", image: generatedIllustrationItaly, color: "#D86672", value: "$3500" } },
+  { index: 17, top: 25, left: 288, card: { name: "ITALY", image: generatedIllustrationItaly, color: "#D97681", value: "$3500" } },
   // 18: PARTY HOUSE (Special)
-  { index: 18, top: 25, left: 25, isLarge: true, card: { name: "PARTY HOUSE", image: generatedIllustrationPartyHouse, color: "#A96D4E" } },
+  { index: 18, top: 25, left: 25, isLarge: true, card: { name: "PARTY HOUSE", image: generatedIllustrationPartyHouse, color: "#B58567" } },
   // 19: JAPAN (Blue)
-  { index: 19, top: 288, left: 25, isSide: true, card: { name: "JAPAN", image: generatedIllustrationJapan, color: "#619CCC", value: "$2500" } },
+  { index: 19, top: 288, left: 25, isSide: true, card: { name: "JAPAN", image: generatedIllustrationJapan, color: "#63A2CF", value: "$2500" } },
   // 20: USA (Yellow)
-  { index: 20, top: 417, left: 25, isSide: true, card: { name: "USA", image: generatedIllustrationUsa, color: "#EDB64D", value: "$8500" } },
+  { index: 20, top: 417, left: 25, isSide: true, card: { name: "USA", image: generatedIllustrationUsa, color: "#E2B64D", value: "$8500" } },
   // 21: TRAVELLING DUTY (Special)
-  { index: 21, top: 547, left: 25, isSide: true, card: { name: "TRAVELLING DUTY", image: generatedIllustrationTravellingDuty, color: "#74699C", fontSize: "text-base", imageClass: "w-60" } },
+  { index: 21, top: 547, left: 25, isSide: true, card: { name: "TRAVELLING DUTY", image: generatedIllustrationTravellingDuty, color: "#9781A6", fontSize: "text-base", imageClass: "w-60" } },
   // 22: ROADWAYS (Utility)
-  { index: 22, top: 676, left: 25, isSide: true, card: { name: "ROADWAYS", image: generatedIllustrationRoadways, color: "#A8B7C9", value: "$3500" } },
+  { index: 22, top: 676, left: 25, isSide: true, card: { name: "ROADWAYS", image: generatedIllustrationRoadways, color: "#A3AFC2", value: "$3500" } },
   // 23: MEXICO (Yellow)
-  { index: 23, top: 806, left: 25, isSide: true, card: { name: "MEXICO", image: generatedIllustrationMexico, color: "#EDB64D", value: "$4000" } },
+  { index: 23, top: 806, left: 25, isSide: true, card: { name: "MEXICO", image: generatedIllustrationMexico, color: "#E2B64D", value: "$4000" } },
   // 24: HONGKONG (Blue)
-  { index: 24, top: 935, left: 25, isSide: true, card: { name: "HONGKONG", image: generatedIllustrationHongkong, color: "#619CCC", value: "$2000" } },
+  { index: 24, top: 935, left: 25, isSide: true, card: { name: "HONGKONG", image: generatedIllustrationHongkong, color: "#63A2CF", value: "$2000" } },
   // 25: UNO (Special)
-  { index: 25, top: 1064, left: 25, isSide: true, card: { name: "UNO", image: image, color: "#326BA8", value: "UNITED NATIONS", fontSize: "text-[11.2px]" } },
+  { index: 25, top: 1064, left: 25, isSide: true, card: { name: "UNO", image: image, color: "#317DB0", value: "UNITED NATIONS", fontSize: "text-[11.2px]" } },
   // 26: AUSTRALIA (Yellow)
-  { index: 26, top: 1194, left: 25, isSide: true, card: { name: "AUSTRALIA", image: generatedIllustrationAustralia, color: "#EDB64D", value: "$3300", fontSize: "text-[19px]" } },
+  { index: 26, top: 1194, left: 25, isSide: true, card: { name: "AUSTRALIA", image: generatedIllustrationAustralia, color: "#E2B64D", value: "$3300", fontSize: "text-[19px]" } },
   // 27: JAIL (Special)
-  { index: 27, top: 1323, left: 25, isLarge: true, card: { name: "JAIL", image: generatedIllustrationJail, color: "#788D9E" } },
+  { index: 27, top: 1323, left: 25, isLarge: true, card: { name: "JAIL", image: generatedIllustrationJail, color: "#697788" } },
   // 28: INDIA (Blue)
-  { index: 28, top: 1323, left: 288, card: { name: "INDIA", image: generatedIllustrationIndia, color: "#619CCC", value: "$4500" } },
+  { index: 28, top: 1323, left: 288, card: { name: "INDIA", image: generatedIllustrationIndia, color: "#63A2CF", value: "$4500" } },
   // 29: CHANCE (Special)
-  { index: 29, top: 1323, left: 417, card: { name: "CHANCE", image: generatedIllustrationChance2, color: "#EDB64D", imageClass: "h-[196px]" } },
+  { index: 29, top: 1323, left: 417, card: { name: "CHANCE", image: generatedIllustrationChance2, color: "#D49A45", imageClass: "h-[196px]" } },
   // 30: SAUDI ARABIA (Green)
-  { index: 30, top: 1323, left: 547, card: { name: "SAUDI ARABIA", image: generatedIllustrationSaudiArabia, color: "#91B65A", value: "$5500", fontSize: "text-xs" } },
+  { index: 30, top: 1323, left: 547, card: { name: "SAUDI ARABIA", image: generatedIllustrationSaudiArabia, color: "#89B46C", value: "$5500", fontSize: "text-xs" } },
   // 31: PETROLEUM (Utility)
-  { index: 31, top: 1323, left: 676, card: { name: "PETROLEUM", image: generatedIllustrationPetroleum, color: "#A8B7C9", value: "$5500", fontSize: "text-[13.5px]" } },
+  { index: 31, top: 1323, left: 676, card: { name: "PETROLEUM", image: generatedIllustrationPetroleum, color: "#A3AFC2", value: "$5500", fontSize: "text-[13.5px]" } },
   // 32: CHINA (Blue)
-  { index: 32, top: 1323, left: 806, card: { name: "CHINA", image: generatedIllustrationChina, color: "#619CCC", value: "$4500" } },
+  { index: 32, top: 1323, left: 806, card: { name: "CHINA", image: generatedIllustrationChina, color: "#63A2CF", value: "$4500" } },
   // 33: RAILWAYS (Utility)
-  { index: 33, top: 1323, left: 935, card: { name: "RAILWAYS", image: generatedIllustrationRailways, color: "#A8B7C9", value: "$9500", fontSize: "text-[15px]" } },
+  { index: 33, top: 1323, left: 935, card: { name: "RAILWAYS", image: generatedIllustrationRailways, color: "#A3AFC2", value: "$9500", fontSize: "text-[15px]" } },
   // 34: MALAYSIA (Green)
-  { index: 34, top: 1323, left: 1064, card: { name: "MALAYSIA", image: generatedIllustrationMalaysia, color: "#91B65A", value: "$1500", fontSize: "text-[15px]" } },
+  { index: 34, top: 1323, left: 1064, card: { name: "MALAYSIA", image: generatedIllustrationMalaysia, color: "#89B46C", value: "$1500", fontSize: "text-[15px]" } },
   // 35: SINGAPORE (Blue)
-  { index: 35, top: 1323, left: 1194, card: { name: "SINGAPORE", image: generatedIllustrationSingapore, color: "#619CCC", value: "$3000", fontSize: "text-[13.5px]" } }
+  { index: 35, top: 1323, left: 1194, card: { name: "SINGAPORE", image: generatedIllustrationSingapore, color: "#63A2CF", value: "$3000", fontSize: "text-[13.5px]" } }
 ];
 
 interface BoardProps {
@@ -165,18 +165,18 @@ export const Board: React.FC<BoardProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full max-w-[min(calc(100vw-16px),calc(100dvh-260px),840px)] max-h-[min(calc(100vw-16px),calc(100dvh-260px),840px)] aspect-square mx-auto rounded-[20px] sm:rounded-[32px] overflow-hidden select-none shadow-[0_12px_40px_rgba(0,0,0,0.6)] border-3 sm:border-4 border-white/60 bg-[#6fafcd]"
+      className="relative w-full h-full max-w-[min(calc(100vw-16px),calc(100dvh-260px),840px)] max-h-[min(calc(100vw-16px),calc(100dvh-260px),840px)] aspect-square mx-auto rounded-[20px] sm:rounded-[32px] overflow-hidden select-none shadow-[0_8px_28px_rgba(25,61,91,0.18)] border-3 sm:border-4 border-white/80 bg-[#DCEEF4]"
     >
       {/* 1600x1600 Canvas Scaled to Fit Responsive Container */}
       <div
-        className="w-[1600px] h-[1600px] absolute top-0 left-0 bg-[#6fafcd]"
+        className="w-[1600px] h-[1600px] absolute top-0 left-0 bg-[#DCEEF4]"
         style={{
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
         }}
       >
         {/* Soft Inset Board Inner Border */}
-        <div className="absolute top-3.5 left-3.5 w-[1572px] h-[1572px] bg-[#b7ddeb] rounded-[31px] shadow-[inset_-3px_-4px_15px_#ffffffec,inset_4px_6px_18px_#46789948]" />
+        <div className="absolute top-3.5 left-3.5 w-[1572px] h-[1572px] bg-[#E9F5F8] rounded-[31px] shadow-[inset_-3px_-4px_15px_#ffffffec,inset_4px_6px_18px_#1b416315]" />
 
         {/* ── Render 36 Spaces with Figma Clay Aesthetics & Game Overlays ── */}
         {SPACES_CONFIG.map((config) => {
@@ -270,16 +270,16 @@ export const Board: React.FC<BoardProps> = ({
           );
         })}
 
-        {/* ── Center 980x980 Clay Rule Console (Directly from Figma) ── */}
+        {/* ── Center 980x980 Clay Rule Console ── */}
         <section
-          className="absolute top-[310px] left-[310px] w-[980px] h-[980px] bg-[#ecf8fc] rounded-[28px] overflow-hidden border-[3px] border-solid border-white shadow-[0px_7px_12px_#305a7c31,inset_-2px_-2px_5px_#ffffffe8]"
+          className="absolute top-[310px] left-[310px] w-[980px] h-[980px] bg-[#E9F5F8] rounded-[28px] overflow-hidden border-[3px] border-solid border-white shadow-[0px_6px_14px_rgba(25,61,91,0.12),inset_-2px_-2px_5px_#ffffffe8]"
           aria-labelledby="international-business-title"
         >
-          <div className="absolute top-2.5 left-2.5 w-[960px] h-[960px] bg-[#eaf5f9] rounded-3xl shadow-[inset_3px_4px_11px_#5f92a62a,inset_-2px_-2px_6px_#ffffffc7]" />
+          <div className="absolute top-2.5 left-2.5 w-[960px] h-[960px] bg-[#E9F5F8] rounded-3xl shadow-[inset_3px_4px_11px_rgba(95,146,166,0.12),inset_-2px_-2px_6px_#ffffffc7]" />
           
           <h1
             id="international-business-title"
-            className="absolute top-6 left-6 w-[932px] h-[95px] rounded-[18px] bg-[#1b4161] shadow-[0px_7px_10px_#2750725a,inset_-1px_-2px_5px_#ffffff28] px-[52px] flex items-center [font-family:'Fredoka-Bold',Helvetica] font-bold text-white text-[45px] tracking-wide"
+            className="absolute top-6 left-6 w-[932px] h-[95px] rounded-[18px] bg-[#193D5B] shadow-[0px_6px_12px_rgba(25,61,91,0.22),inset_-1px_-2px_5px_rgba(255,255,255,0.2)] px-[52px] flex items-center [font-family:'Fredoka',Helvetica] font-bold text-white text-[45px] tracking-wide"
           >
             INTERNATIONAL BUSINESS
           </h1>
@@ -289,21 +289,21 @@ export const Board: React.FC<BoardProps> = ({
               key={`${rule.title}-${rule.subtitle}`}
               className={`absolute ${index < 2 ? "top-[141px]" : "top-[566px]"} ${
                 index % 2 === 0 ? "left-6" : "left-[498px]"
-              } w-[458px] h-[352px] bg-[#f9fcff] rounded-[18px] overflow-hidden border-2 border-solid border-white shadow-[0px_7px_10px_#2c58722e,inset_-2px_-2px_5px_#ffffffd9]`}
+              } w-[458px] h-[352px] bg-white rounded-[18px] overflow-hidden border-2 border-solid border-white shadow-[0px_6px_12px_rgba(25,61,91,0.1),inset_-2px_-2px_5px_#ffffffd9]`}
             >
               <header
                 className="absolute top-0 left-0 w-[458px] h-12 rounded-xl px-4 flex items-center text-white shadow-sm"
                 style={{ backgroundColor: rule.color }}
               >
-                <strong className="[font-family:'Fredoka-Bold',Helvetica] text-[23px]">
+                <strong className="[font-family:'Fredoka',Helvetica] font-bold text-[23px]">
                   {rule.title}
                 </strong>
-                <span className="ml-4 [font-family:'Fredoka-Medium',Helvetica] text-[13.5px] opacity-90">
+                <span className="ml-4 [font-family:'Fredoka',Helvetica] font-semibold text-[13.5px] text-[#C5E7F1] opacity-95">
                   {rule.subtitle}
                 </span>
               </header>
-              <div className="absolute top-[51px] left-[15px] w-[428px] h-0.5 bg-[#b0d8e3]" />
-              <p className="absolute top-[61px] left-4 w-[424px] h-[277px] [font-family:'Outfit-Medium',Helvetica] font-medium text-[#173b55] text-[18px] leading-[26px]">
+              <div className="absolute top-[51px] left-[15px] w-[428px] h-0.5 bg-[#DAEDF0]" />
+              <p className="absolute top-[61px] left-4 w-[424px] h-[277px] [font-family:'Outfit',sans-serif] font-medium text-[#163650] text-[18px] leading-[26px]">
                 {rule.text.map((line) => (
                   <span key={line}>
                     {line}
