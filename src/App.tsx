@@ -121,6 +121,7 @@ export const App: React.FC = () => {
 
   const diceRef = useRef<ThreeDiceRollHandle>(null);
   const activePlayer = players[activePlayerIndex];
+  const isMyTurn = !isOnlineSession || (activePlayer !== undefined && activePlayer.id === myPlayerId);
 
   const logMessage = (msg: string) => {
     setLogs((prev) => [...prev.slice(-20), msg]);
@@ -171,7 +172,13 @@ export const App: React.FC = () => {
         break;
 
       case 'START_GAME':
-        handleStartGame(action.players, action.shorterGame, action.timerMinutes);
+        setIsOnlineSession(true);
+        setIsHost(false);
+        setMyPlayerId(multiplayerManager.getMyId());
+        setOnlineModalOpen(false);
+        if (phase !== 'playing') {
+          handleStartGame(action.players, action.shorterGame, action.timerMinutes);
+        }
         break;
 
       case 'ROLL_DICE':
@@ -250,6 +257,12 @@ export const App: React.FC = () => {
       case 'END_TURN':
         setTurnStatus('idle');
         setActivePlayerIndex(action.nextPlayerIndex);
+        if (action.players) {
+          setPlayers(action.players);
+        }
+        if (action.spacesState) {
+          setSpacesState(action.spacesState);
+        }
         break;
     }
   };
@@ -259,8 +272,8 @@ export const App: React.FC = () => {
     setIsHost(hostFlag);
     setMyPlayerId(playerId);
     handleStartGame(onlinePlayers, false, 30);
-    const mode = multiplayerManager.getMode();
-    logMessage(`🌐 Connected to Online Game (${mode === 'p2p' ? '2-Player P2P WebRTC' : '3-4P Google Firebase'})!`);
+    const roomCode = multiplayerManager.getRoom()?.roomCode || '';
+    logMessage(`🌐 Connected to Online Room ${roomCode}!`);
   };
 
   // Timer countdown for Shorter Game
@@ -1136,6 +1149,16 @@ export const App: React.FC = () => {
       description: `🏠 ${activePlayer.name} erected a house on ${space.name} (Rent increased)!`,
       icon: '🏠'
     });
+
+    if (isOnlineSession && activePlayer.id === myPlayerId) {
+      multiplayerManager.sendAction({
+        type: 'BUILD_UPGRADE',
+        playerId: activePlayer.id,
+        spaceIndex: space.index,
+        isHotel: false,
+        cost,
+      });
+    }
   };
 
   const handleBuildHotel = (space: BoardSpace) => {
@@ -1165,6 +1188,16 @@ export const App: React.FC = () => {
       description: `🏨 ${activePlayer.name} erected a LUXURY HOTEL on ${space.name}!`,
       icon: '🏨'
     });
+
+    if (isOnlineSession && activePlayer.id === myPlayerId) {
+      multiplayerManager.sendAction({
+        type: 'BUILD_UPGRADE',
+        playerId: activePlayer.id,
+        spaceIndex: space.index,
+        isHotel: true,
+        cost,
+      });
+    }
   };
 
   const handleMortgage = (space: BoardSpace) => {
@@ -1193,6 +1226,16 @@ export const App: React.FC = () => {
       description: `🏷️ ${activePlayer.name} mortgaged ${space.name} to the Bank for +$${mort.toLocaleString()}.`,
       icon: '🏷️'
     });
+
+    if (isOnlineSession && activePlayer.id === myPlayerId) {
+      multiplayerManager.sendAction({
+        type: 'MORTGAGE',
+        playerId: activePlayer.id,
+        spaceIndex: space.index,
+        isMortgage: true,
+        amount: mort,
+      });
+    }
   };
 
   const handleLiftMortgage = (space: BoardSpace) => {
@@ -1221,6 +1264,16 @@ export const App: React.FC = () => {
       description: `✅ ${activePlayer.name} redeemed ${space.name} by paying $${mort.toLocaleString()}!`,
       icon: '✅'
     });
+
+    if (isOnlineSession && activePlayer.id === myPlayerId) {
+      multiplayerManager.sendAction({
+        type: 'MORTGAGE',
+        playerId: activePlayer.id,
+        spaceIndex: space.index,
+        isMortgage: false,
+        amount: mort,
+      });
+    }
   };
 
   // Jail Bail
@@ -1329,6 +1382,8 @@ export const App: React.FC = () => {
         type: 'END_TURN',
         playerId: activePlayer.id,
         nextPlayerIndex: nextIdx,
+        players,
+        spacesState,
       });
     }
   };
@@ -1372,9 +1427,7 @@ export const App: React.FC = () => {
           {isOnlineSession ? (
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#DDF3EA] border border-[#89B46C]/60 shadow-xs text-xs font-game">
               <span className="w-2 h-2 rounded-full bg-[#207E68] animate-ping" />
-              <span className="font-extrabold text-[#207E68]">
-                {multiplayerManager.getMode() === 'p2p' ? '⚡ P2P (2P)' : '🌐 CLOUD (3-4P)'}
-              </span>
+              <span className="font-extrabold text-[#207E68]">ROOM</span>
               <span className="text-[#668195]">|</span>
               <span className="text-[#193D5B] font-black">{multiplayerManager.getRoom()?.roomCode || 'LIVE'}</span>
             </div>
@@ -1449,8 +1502,8 @@ export const App: React.FC = () => {
                 players={players}
                 activePlayer={activePlayer}
                 timeRemaining={isShortGame ? timeRemaining : undefined}
-                canRoll={turnStatus === 'idle' && !activePlayer.isInJail}
-                canEndTurn={turnStatus === 'done' || (turnStatus === 'action' && !activePlayer.isAI)}
+                canRoll={isMyTurn && turnStatus === 'idle' && !activePlayer.isInJail}
+                canEndTurn={isMyTurn && (turnStatus === 'done' || (turnStatus === 'action' && !activePlayer.isAI))}
                 onRollDice={() => diceRef.current?.roll()}
                 onOpenCreditCard={() => setCreditCardModalOpen(true)}
                 onOpenJail={() => setJailModalOpen(true)}
@@ -1464,7 +1517,7 @@ export const App: React.FC = () => {
                   <ThreeDiceRoll
                     ref={diceRef}
                     onRollComplete={handleRollDiceComplete}
-                    disabled={turnStatus !== 'idle' || activePlayer.isAI || (isOnlineSession && activePlayer.id !== myPlayerId)}
+                    disabled={!isMyTurn || turnStatus !== 'idle' || activePlayer.isAI}
                     compact={true}
                   />
                 ) : undefined}
@@ -1477,8 +1530,8 @@ export const App: React.FC = () => {
                 players={players}
                 activePlayer={activePlayer}
                 timeRemaining={isShortGame ? timeRemaining : undefined}
-                canRoll={turnStatus === 'idle' && !activePlayer.isInJail}
-                canEndTurn={turnStatus === 'done' || (turnStatus === 'action' && !activePlayer.isAI)}
+                canRoll={isMyTurn && turnStatus === 'idle' && !activePlayer.isInJail}
+                canEndTurn={isMyTurn && (turnStatus === 'done' || (turnStatus === 'action' && !activePlayer.isAI))}
                 onRollDice={() => diceRef.current?.roll()}
                 onOpenCreditCard={() => setCreditCardModalOpen(true)}
                 onOpenJail={() => setJailModalOpen(true)}
@@ -1498,7 +1551,7 @@ export const App: React.FC = () => {
                   <ThreeDiceRoll
                     ref={diceRef}
                     onRollComplete={handleRollDiceComplete}
-                    disabled={turnStatus !== 'idle' || activePlayer.isAI}
+                    disabled={!isMyTurn || turnStatus !== 'idle' || activePlayer.isAI}
                   />
                 </div>
               )}
@@ -1559,11 +1612,13 @@ export const App: React.FC = () => {
           owner={spacesState[selectedSpace.index]?.ownerId !== undefined ? players.find((p) => p.id === spacesState[selectedSpace.index].ownerId) : undefined}
           activePlayer={activePlayer}
           canBuy={
+            isMyTurn &&
             spacesState[selectedSpace.index]?.ownerId === undefined &&
             activePlayer.boardPosition === selectedSpace.index &&
             activePlayer.cash >= (selectedSpace.price || 0)
           }
           canBuildHouse={
+            isMyTurn &&
             spacesState[selectedSpace.index]?.ownerId === activePlayer.id &&
             selectedSpace.type === 'Property' &&
             spacesState[selectedSpace.index].housesCount < GAME_CONSTANTS.MAX_HOUSES &&
@@ -1572,6 +1627,7 @@ export const App: React.FC = () => {
             activePlayer.ownedPropertyIndices.filter((idx) => BOARD_SPACES[idx].group === selectedSpace.group).length >= GAME_CONSTANTS.MONOPOLY_COUNT
           }
           canBuildHotel={
+            isMyTurn &&
             spacesState[selectedSpace.index]?.ownerId === activePlayer.id &&
             selectedSpace.type === 'Property' &&
             spacesState[selectedSpace.index].housesCount >= GAME_CONSTANTS.MAX_HOUSES &&
@@ -1579,12 +1635,14 @@ export const App: React.FC = () => {
             activePlayer.cash >= (selectedSpace.hotelCost || 0)
           }
           canMortgage={
+            isMyTurn &&
             spacesState[selectedSpace.index]?.ownerId === activePlayer.id &&
             !spacesState[selectedSpace.index].isMortgaged &&
             spacesState[selectedSpace.index].housesCount === 0 &&
             !spacesState[selectedSpace.index].hasHotel
           }
           canLiftMortgage={
+            isMyTurn &&
             spacesState[selectedSpace.index]?.ownerId === activePlayer.id &&
             spacesState[selectedSpace.index].isMortgaged &&
             activePlayer.cash >= (selectedSpace.mortgage || 0)
@@ -1596,7 +1654,9 @@ export const App: React.FC = () => {
           onLiftMortgage={() => handleLiftMortgage(selectedSpace)}
           onClose={() => {
             setSelectedSpace(null);
-            setTurnStatus('done');
+            if (isMyTurn && selectedSpace?.index === activePlayer.boardPosition) {
+              setTurnStatus('done');
+            }
           }}
         />
       )}

@@ -58,8 +58,10 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
+  const hasLaunchedRef = React.useRef<boolean>(false);
 
   useEffect(() => {
+    hasLaunchedRef.current = false;
     if (initialRoomCode) {
       setTab('join');
       setJoinCode(initialRoomCode.toUpperCase());
@@ -75,7 +77,8 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
       soundService.triggerHaptic('light');
 
       // If friend and host started the game
-      if (room.status === 'playing') {
+      if (room.status === 'playing' && !multiplayerManager.isHost() && !hasLaunchedRef.current) {
+        hasLaunchedRef.current = true;
         launchGame(room);
       }
     });
@@ -206,6 +209,7 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
   const handleHostStartGame = () => {
     if (!activeRoom) return;
 
+    hasLaunchedRef.current = true;
     soundService.playVictory();
     const updatedRoom: RoomMeta = {
       ...activeRoom,

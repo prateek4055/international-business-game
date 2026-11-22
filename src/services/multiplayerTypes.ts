@@ -65,6 +65,8 @@ export type GameAction =
       type: 'END_TURN';
       playerId?: number;
       nextPlayerIndex: number;
+      players?: Player[];
+      spacesState?: Record<number, { ownerId?: number; housesCount: number; hasHotel: boolean; isMortgaged: boolean }>;
     }
   | {
       type: 'ROOM_CLOSED';

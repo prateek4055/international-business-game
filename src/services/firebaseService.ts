@@ -59,7 +59,7 @@ class FirebaseService {
   public async joinRoom(
     roomCode: string,
     friendPlayer: { name: string; color: string }
-  ): Promise<RoomMeta> {
+  ): Promise<{ room: RoomMeta; myPlayerId: number }> {
     this.cleanup();
     const formattedCode = roomCode.toUpperCase();
     this.currentRoomCode = formattedCode;
@@ -105,7 +105,7 @@ class FirebaseService {
     });
 
     this.listenToRoom(formattedCode);
-    return { ...roomData, players: updatedPlayers };
+    return { room: { ...roomData, players: updatedPlayers }, myPlayerId: newId };
   }
 
   // Host closes the room: notify peers then remove room

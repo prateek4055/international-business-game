@@ -57,13 +57,10 @@ class MultiplayerManager {
     this.isUserHost = false;
     this.activeMode = 'firebase';
 
-    const fbRoom = await firebaseService.joinRoom(cleanCode, friendPlayer);
-    const myPlayer = fbRoom.players.find(
-      (p) => p.name === friendPlayer.name || p.name.startsWith(friendPlayer.name)
-    );
-    this.myPlayerId = myPlayer ? myPlayer.id : fbRoom.players.length;
-    this.currentRoom = fbRoom;
-    return fbRoom;
+    const { room, myPlayerId } = await firebaseService.joinRoom(cleanCode, friendPlayer);
+    this.myPlayerId = myPlayerId;
+    this.currentRoom = room;
+    return room;
   }
 
   // Host closes / deletes the room
