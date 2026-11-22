@@ -1,0 +1,400 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════
+   INTERNATIONAL BUSINESS — GLOBAL STYLES
+   Claymorphism + Gamified Design System
+════════════════════════════════════════════ */
+
+:root {
+  font-family: 'Fredoka', system-ui, sans-serif;
+  --clay-bg: #0E2235;
+  --clay-surface: #163D5A;
+  --clay-card: #193D5A;
+  --clay-border: #23435B;
+  --clay-gold: #EDB64D;
+  --clay-coral: #D86672;
+  --clay-mint: #91B65A;
+  --clay-sky: #619CCC;
+  --clay-utility: #A8B7C9;
+  --clay-sun: #EDB64D;
+  --clay-navy: #193D5A;
+
+  /* Figma Ticket Colors */
+  --business-game-ticket-colors-group-blue: rgba(97, 156, 204, 1);
+  --business-game-ticket-colors-group-green: rgba(145, 182, 90, 1);
+  --business-game-ticket-colors-group-red: rgba(216, 102, 114, 1);
+  --business-game-ticket-colors-group-utility: rgba(168, 183, 201, 1);
+  --business-game-ticket-colors-group-yellow: rgba(237, 182, 77, 1);
+  --business-game-ticket-colors-UI-body-ink: rgba(24, 60, 90, 1);
+  --business-game-ticket-colors-UI-card-surface: rgba(247, 252, 255, 1);
+  --business-game-ticket-colors-UI-cream-surface: rgba(255, 248, 236, 1);
+  --business-game-ticket-colors-UI-dark-navy: rgba(25, 61, 90, 1);
+  --business-game-ticket-colors-UI-gold: rgba(237, 182, 77, 1);
+  --business-game-ticket-colors-UI-positive: rgba(75, 155, 110, 1);
+
+  --animate-spin: spin 1s linear infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 1s var(--animation-delay, 0s) ease forwards;
+}
+
+.animate-fade-up {
+  animation: fade-up 1s var(--animation-delay, 0s) ease forwards;
+}
+
+.animate-marquee {
+  animation: marquee var(--duration) infinite linear;
+}
+
+.animate-marquee-vertical {
+  animation: marquee-vertical var(--duration) linear infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 8s infinite;
+}
+
+.animate-spin {
+  animation: var(--animate-spin);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes image-glow {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.74, 0.25, 0.76, 1);
+  }
+
+  10% {
+    opacity: 0.7;
+    animation-timing-function: cubic-bezier(0.12, 0.01, 0.08, 0.99);
+  }
+
+  to {
+    opacity: 0.4;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  90%,
+  to {
+    background-position: calc(-100% - var(--shimmer-width)) 0;
+  }
+
+  30%,
+  60% {
+    background-position: calc(100% + var(--shimmer-width)) 0;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate(0);
+  }
+
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+  }
+}
+
+@keyframes marquee-vertical {
+  0% {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+  }
+}
+
+/* ─── Root Background (Rich Gamified Board Surface) ─────────────────────── */
+body {
+  background: radial-gradient(ellipse at 50% 25%, #1B4B75 0%, #0E2B45 55%, #071726 100%);
+  background-attachment: fixed;
+  min-height: 100dvh;
+  color: #F7FCFF;
+}
+
+/* ─── Subtle Ambient Vignette ─────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(27, 75, 117, 0.3) 0%, rgba(7, 23, 38, 0.85) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Claymorphism Panels ───────────────────── */
+.clay-card {
+  background: linear-gradient(180deg, #1C4566 0%, #13334E 100%);
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  border-radius: 22px;
+  box-shadow: 
+    0 8px 24px rgba(7, 23, 38, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+}
+
+.clay-card-gold {
+  background: linear-gradient(180deg, #FFD24D 0%, #F5A623 100%);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  box-shadow: 
+    0 8px 20px rgba(245, 166, 35, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.clay-card-mint {
+  background: linear-gradient(180deg, #48D080 0%, #20A05A 100%);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  box-shadow: 
+    0 8px 20px rgba(32, 160, 90, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.clay-card-coral {
+  background: linear-gradient(180deg, #FF6B7A 0%, #E03547 100%);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  box-shadow: 
+    0 8px 20px rgba(224, 53, 71, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* ─── Gamified 3D Arcade Buttons ────────────────────────── */
+.btn-clay-gold,
+.btn-arcade-gold {
+  background: linear-gradient(180deg, #FFD23F 0%, #F59E0B 100%);
+  border: none;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 5px 0 #B45309, 0 10px 20px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  color: #381A00;
+  font-family: 'Fredoka', cursive, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+.btn-clay-gold:hover,
+.btn-arcade-gold:hover {
+  filter: brightness(1.05);
+}
+.btn-clay-gold:active,
+.btn-arcade-gold:active {
+  box-shadow: 0 2px 0 #B45309, 0 4px 10px rgba(245, 158, 11, 0.3);
+  transform: translateY(3px);
+}
+
+.btn-clay-mint,
+.btn-arcade-green {
+  background: linear-gradient(180deg, #34D399 0%, #059669 100%);
+  border: none;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  box-shadow: 0 5px 0 #045E42, 0 10px 20px rgba(5, 150, 105, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  color: #FFFFFF;
+  font-family: 'Fredoka', cursive, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+.btn-clay-mint:hover,
+.btn-arcade-green:hover {
+  filter: brightness(1.05);
+}
+.btn-clay-mint:active,
+.btn-arcade-green:active {
+  box-shadow: 0 2px 0 #045E42, 0 4px 10px rgba(5, 150, 105, 0.3);
+  transform: translateY(3px);
+}
+
+.btn-clay-coral,
+.btn-arcade-red {
+  background: linear-gradient(180deg, #F87171 0%, #DC2626 100%);
+  border: none;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  box-shadow: 0 5px 0 #991B1B, 0 10px 20px rgba(220, 38, 38, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  color: #FFFFFF;
+  font-family: 'Fredoka', cursive, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+.btn-clay-coral:hover,
+.btn-arcade-red:hover {
+  filter: brightness(1.05);
+}
+.btn-clay-coral:active,
+.btn-arcade-red:active {
+  box-shadow: 0 2px 0 #991B1B, 0 4px 10px rgba(220, 38, 38, 0.3);
+  transform: translateY(3px);
+}
+
+.btn-clay-purple,
+.btn-arcade-purple {
+  background: linear-gradient(180deg, #A78BFA 0%, #7C3AED 100%);
+  border: none;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  box-shadow: 0 5px 0 #5B21B6, 0 10px 20px rgba(124, 58, 237, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  color: #FFFFFF;
+  font-family: 'Fredoka', cursive, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+.btn-clay-purple:active,
+.btn-arcade-purple:active {
+  box-shadow: 0 2px 0 #5B21B6, 0 4px 10px rgba(124, 58, 237, 0.3);
+  transform: translateY(3px);
+}
+
+.btn-clay-sky,
+.btn-arcade-blue {
+  background: linear-gradient(180deg, #38BDF8 0%, #0284C7 100%);
+  border: none;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  box-shadow: 0 5px 0 #035480, 0 10px 20px rgba(2, 132, 199, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  color: #FFFFFF;
+  font-family: 'Fredoka', cursive, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+.btn-clay-sky:active,
+.btn-arcade-blue:active {
+  box-shadow: 0 2px 0 #035480, 0 4px 10px rgba(2, 132, 199, 0.3);
+  transform: translateY(3px);
+}
+
+/* ─── Board Tile Clay Style ───────────────── */
+.tile-clay {
+  border-radius: 10px;
+  box-shadow: 
+    0 3px 0 rgba(25, 61, 90, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tile-clay:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 0 rgba(25, 61, 90, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.tile-clay.active-pawn {
+  transform: scale(1.06) translateY(-2px);
+  box-shadow: 0 0 0 3px #EDB64D, 0 6px 0 rgba(25, 61, 90, 0.4), 0 0 20px rgba(237, 182, 77, 0.5);
+  z-index: 20;
+}
+
+/* ─── Pawn Animation ──────────────────────── */
+@keyframes pawn-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.1); }
+}
+.pawn { animation: pawn-bounce 1.2s ease-in-out infinite; }
+
+/* ─── Event Flash ─────────────────────────── */
+@keyframes event-pop {
+  0% { transform: scale(0.7) rotate(-2deg); opacity: 0; }
+  60% { transform: scale(1.03) rotate(0.5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.event-pop { animation: event-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+/* ─── Coin Flip ───────────────────────────── */
+@keyframes coin-flip {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+.coin-flip { animation: coin-flip 0.6s ease; }
+
+/* ─── Glow Text (Ticket Accents) ───────────────────────────── */
+.text-glow-gold { text-shadow: 0 0 10px rgba(237, 182, 77, 0.7), 0 0 20px rgba(237, 182, 77, 0.35); }
+.text-glow-mint { text-shadow: 0 0 10px rgba(145, 182, 90, 0.7), 0 0 20px rgba(145, 182, 90, 0.35); }
+.text-glow-coral { text-shadow: 0 0 10px rgba(216, 102, 114, 0.7), 0 0 20px rgba(216, 102, 114, 0.35); }
+.text-glow-sky { text-shadow: 0 0 10px rgba(97, 156, 204, 0.7), 0 0 20px rgba(97, 156, 204, 0.35); }
+
+/* ─── Scrollbar ───────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(14, 34, 53, 0.8); }
+::-webkit-scrollbar-thumb { background: rgba(97, 156, 204, 0.4); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(97, 156, 204, 0.7); }
+
+/* ─── Native <dialog> ─────────────────────── */
+dialog:modal { overscroll-behavior: contain; }
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background: rgba(10, 25, 40, 0.82);
+  backdrop-filter: blur(8px);
+}
+
+/* ─── Game HUD Ticker ─────────────────────── */
+@keyframes ticker-scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.ticker-scroll { animation: ticker-scroll 20s linear infinite; }
+
+/* ─── Board Tile Color Bands (Exact Solid Figma Ticket Palette) ──────────────── */
+.band-red    { background: #D86672; }
+.band-blue   { background: #619CCC; }
+.band-green  { background: #91B65A; }
+.band-yellow { background: #EDB64D; }
+.band-grey   { background: #A8B7C9; }
+.band-start  { background: #D86672; }
+.band-jail   { background: #788D9E; }
+.band-party  { background: #A96D4E; }
+.band-resort { background: #23877F; }
+.band-uno    { background: #326BA8; }
+.band-chance { background: #EDB64D; }
+.band-custom { background: #74699C; }
+.band-travel { background: #74699C; }

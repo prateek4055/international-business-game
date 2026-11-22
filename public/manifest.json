@@ -1,0 +1,18 @@
+{
+  "short_name": "Intl Business",
+  "name": "International Business — Board Game",
+  "icons": [
+    {
+      "src": "/board-assets/START.webp",
+      "type": "image/webp",
+      "sizes": "192x192 512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0E2B45",
+  "theme_color": "#193D5A",
+  "display": "standalone",
+  "orientation": "portrait",
+  "categories": ["games", "entertainment", "board"]
+}
