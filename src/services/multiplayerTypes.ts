@@ -16,10 +16,22 @@ export interface RoomMeta {
   roomCode: string;
   hostName: string;
   maxPlayers: 2 | 3 | 4 | 5 | 6;
+  timerMinutes?: number;
+  quickDeal?: boolean;
   mode: 'firebase' | 'p2p';
   status: 'lobby' | 'playing' | 'ended' | 'closed';
   players: RoomPlayer[];
   createdAt: number;
+}
+
+export interface PlayerScoreSummary {
+  rank: number;
+  player: Player;
+  totalWealth: number;
+  cash: number;
+  propertyValue: number;
+  constructionValue: number;
+  isBankrupt: boolean;
 }
 
 export type GameAction =
@@ -28,6 +40,11 @@ export type GameAction =
       players: Player[];
       shorterGame: boolean;
       timerMinutes: number;
+      initialSpacesState?: Record<number, { ownerId?: number; housesCount: number; hasHotel: boolean; isMortgaged: boolean }>;
+    }
+  | {
+      type: 'GAME_OVER';
+      rankings: PlayerScoreSummary[];
     }
   | {
       type: 'ROLL_DICE';

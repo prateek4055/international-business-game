@@ -15,13 +15,15 @@ import {
   Loader2,
   Trash2,
   RefreshCw,
-  LogOut
+  LogOut,
+  Clock,
+  Zap
 } from 'lucide-react';
 
 interface OnlineRoomModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onStartOnlineGame: (players: Player[], isHost: boolean, myPlayerId: number) => void;
+  onStartOnlineGame: (players: Player[], isHost: boolean, myPlayerId: number, isShortGame?: boolean, timerMinutes?: number) => void;
   initialRoomCode?: string;
 }
 
@@ -46,6 +48,8 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
   const [hostName, setHostName] = useState<string>('Player 1');
   const [hostColor, setHostColor] = useState<string>(PLAYER_COLORS[0].hex);
   const [maxPlayers, setMaxPlayers] = useState<2 | 3 | 4 | 5 | 6>(4);
+  const [timerMinutes, setTimerMinutes] = useState<number>(30);
+  const [quickDeal, setQuickDeal] = useState<boolean>(false);
   const [generatedCode, setGeneratedCode] = useState<string>('');
   
   // Friend join state
@@ -110,7 +114,9 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
       const room = await multiplayerManager.createRoom(
         { name: hostName.trim(), color: hostColor },
         maxPlayers,
-        code
+        code,
+        timerMinutes,
+        quickDeal
       );
       setActiveRoom(room);
     } catch (err: any) {
@@ -179,7 +185,10 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
     }
   };
 
-  const launchGame = (room: RoomMeta) => {
+  const launchGame = (room: RoomMeta, shorterGame?: boolean, timerMins?: number) => {
+    const isShort = shorterGame !== undefined ? shorterGame : (room.timerMinutes !== undefined ? room.timerMinutes > 0 : true);
+    const mins = timerMins !== undefined ? timerMins : (room.timerMinutes ?? 30);
+
     const gamePlayers: Player[] = room.players.map((p) => {
       const matched = PLAYER_COLORS.find((c) => c.hex === p.color);
       return {
@@ -202,7 +211,7 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
       };
     });
 
-    onStartOnlineGame(gamePlayers, multiplayerManager.isHost(), multiplayerManager.getMyId());
+    onStartOnlineGame(gamePlayers, multiplayerManager.isHost(), multiplayerManager.getMyId(), isShort, mins);
     onClose();
   };
 
@@ -215,6 +224,9 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
       ...activeRoom,
       status: 'playing',
     };
+
+    const roomTimer = activeRoom.timerMinutes ?? timerMinutes;
+    const roomQuick = activeRoom.quickDeal ?? quickDeal;
 
     multiplayerManager.sendAction({
       type: 'START_GAME',
@@ -239,12 +251,12 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
           isAI: false,
         };
       }),
-      shorterGame: false,
-      timerMinutes: 30,
+      shorterGame: roomTimer > 0 || roomQuick,
+      timerMinutes: roomTimer,
     });
 
     multiplayerManager.updateRoomState(updatedRoom);
-    launchGame(updatedRoom);
+    launchGame(updatedRoom, roomTimer > 0 || roomQuick, roomTimer);
   };
 
   const getInviteLink = () => {
@@ -365,6 +377,33 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
                     <span>SHARE</span>
                   </button>
                 </div>
+              </div>
+
+              {/* Match Mode Badge in Waiting Room */}
+              <div className="bg-[#DAEDF0] border border-[#168B91]/30 rounded-2xl p-3 flex items-center justify-between shadow-xs">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-[#168B91] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                    <Clock size={16} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-[#163650]">
+                      {activeRoom.timerMinutes && activeRoom.timerMinutes > 0
+                        ? `${activeRoom.timerMinutes} Min Match • Wealth Victory`
+                        : 'Classic Match • Full Bankruptcy'}
+                    </div>
+                    <div className="text-[10px] text-[#668195]">
+                      {activeRoom.timerMinutes && activeRoom.timerMinutes > 0
+                        ? 'Highest total Empire Net Worth wins at 0:00'
+                        : 'Play until all opponents are eliminated'}
+                    </div>
+                  </div>
+                </div>
+
+                {activeRoom.quickDeal && (
+                  <span className="text-[10px] font-extrabold text-[#92723E] bg-[#FFF0D6] px-2 py-0.5 rounded-lg border border-[#E2B64D]/40">
+                    ⚡ 2 Free Sites
+                  </span>
+                )}
               </div>
 
               {/* Waiting Room Players List */}
@@ -578,6 +617,66 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
                         </button>
                       ))}
                     </div>
+                  </div>
+
+                  {/* Match Duration & Fast Mode */}
+                  <div>
+                    <label className="text-xs text-[#163650] font-bold flex items-center justify-between mb-1.5">
+                      <span className="flex items-center gap-1.5">
+                        <Clock size={14} className="text-[#D69C49]" />
+                        MATCH DURATION (TIMER)
+                      </span>
+                      <span className="text-[10px] text-[#168B91] font-extrabold uppercase">
+                        {timerMinutes === 0 ? 'Classic Bankruptcy' : `${timerMinutes}m Wealth Victory`}
+                      </span>
+                    </label>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {[
+                        { label: '15m Blitz', mins: 15 },
+                        { label: '30m Match', mins: 30 },
+                        { label: '45m Grand', mins: 45 },
+                        { label: 'Classic', mins: 0 },
+                      ].map((opt) => (
+                        <button
+                          key={opt.mins}
+                          type="button"
+                          onClick={() => setTimerMinutes(opt.mins)}
+                          className={`py-2 px-1 rounded-xl font-game font-extrabold text-xs transition-all border text-center ${
+                            timerMinutes === opt.mins
+                              ? 'bg-[#DAEDF0] border-[#168B91] text-[#168B91] shadow-xs scale-[1.02]'
+                              : 'bg-[#F1F5F8] border-[#DAEDF0] text-[#668195] hover:text-[#163650]'
+                          }`}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Quick Deal 2 Countries Toggle */}
+                  <div className="bg-[#F1F5F8] border border-[#DAEDF0] rounded-xl p-2.5 flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-[#163650] flex items-center gap-1.5">
+                        <Zap size={14} className="text-[#D69C49]" />
+                        <span>Quick Deal (2 Free Properties)</span>
+                      </div>
+                      <div className="text-[10px] text-[#668195]">
+                        Deals 2 random countries to everyone on turn 1
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setQuickDeal(!quickDeal)}
+                      className={`w-11 h-6 rounded-full relative transition-colors cursor-pointer border ${
+                        quickDeal ? 'bg-[#168B91] border-[#168B91]' : 'bg-[#E2ECF2] border-[#D0DEE5]'
+                      }`}
+                    >
+                      <div
+                        className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+                          quickDeal ? 'translate-x-5' : 'translate-x-0.5'
+                        }`}
+                      />
+                    </button>
                   </div>
 
                   <button

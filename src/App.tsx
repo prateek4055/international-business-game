@@ -22,8 +22,8 @@ import { OnlineRoomModal } from './components/OnlineRoomModal';
 import { TransactionBanner, TransactionEvent } from './components/TransactionBanner';
 import { soundService } from './services/soundService';
 import { multiplayerManager } from './services/multiplayerManager';
-import { GameAction } from './services/multiplayerTypes';
-import { Trophy, RotateCcw, Volume2, VolumeX, Wifi, Users } from 'lucide-react';
+import { GameAction, PlayerScoreSummary } from './services/multiplayerTypes';
+import { Trophy, RotateCcw, Volume2, VolumeX, Wifi, Users, Clock } from 'lucide-react';
 
 export const App: React.FC = () => {
   // Game Setup
@@ -75,6 +75,7 @@ export const App: React.FC = () => {
   const [lastDice, setLastDice] = useState<[number, number]>([1, 1]);
   const [logs, setLogs] = useState<string[]>([]);
   const [winner, setWinner] = useState<Player | null>(null);
+  const [rankings, setRankings] = useState<PlayerScoreSummary[]>([]);
 
   // Active Transaction Toast
   const [transactionEvent, setTransactionEvent] = useState<TransactionEvent | null>(null);
@@ -169,6 +170,15 @@ export const App: React.FC = () => {
           description: 'The host has closed this room. Returning to lobby.',
           icon: '🚪'
         });
+        break;
+
+      case 'GAME_OVER':
+        setRankings(action.rankings);
+        setWinner(action.rankings[0]?.player || null);
+        setPhase('game_over');
+        soundService.playVictory();
+        confetti({ particleCount: 220, spread: 100, origin: { y: 0.6 } });
+        logMessage(`🏆 GAME OVER! 1st Place: ${action.rankings[0]?.player?.name}! 🏆`);
         break;
 
       case 'START_GAME':
@@ -267,13 +277,64 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleStartOnlineSession = (onlinePlayers: Player[], hostFlag: boolean, playerId: number) => {
+  const handleStartOnlineSession = (
+    onlinePlayers: Player[],
+    hostFlag: boolean,
+    playerId: number,
+    shorterGame = false,
+    timerMinutes = 30
+  ) => {
     setIsOnlineSession(true);
     setIsHost(hostFlag);
     setMyPlayerId(playerId);
-    handleStartGame(onlinePlayers, false, 30);
+    handleStartGame(onlinePlayers, shorterGame, timerMinutes);
     const roomCode = multiplayerManager.getRoom()?.roomCode || '';
     logMessage(`🌐 Connected to Online Room ${roomCode}!`);
+  };
+
+  const calculateRankings = (): PlayerScoreSummary[] => {
+    const scores = players.map((p) => {
+      let propertyValue = 0;
+      let constructionValue = 0;
+      p.ownedPropertyIndices.forEach((idx) => {
+        const s = BOARD_SPACES[idx];
+        const state = spacesState[idx];
+        if (state?.isMortgaged) {
+          propertyValue += (s.mortgage || 0);
+        } else {
+          propertyValue += (s.price || 0);
+        }
+        constructionValue += (state?.housesCount || 0) * (s.houseCost || 0);
+        if (state?.hasHotel) constructionValue += (s.hotelCost || 0);
+      });
+
+      const unpaidDebt = (p.creditCardInstallmentsLeft || 0) * GAME_CONSTANTS.CREDIT_CARD_INSTALLMENT;
+      const totalWealth = Math.max(0, p.cash + propertyValue + constructionValue - unpaidDebt);
+
+      return {
+        player: p,
+        totalWealth,
+        cash: p.cash,
+        propertyValue,
+        constructionValue,
+        isBankrupt: p.isBankrupt,
+      };
+    });
+
+    scores.sort((a, b) => {
+      if (a.isBankrupt && !b.isBankrupt) return 1;
+      if (!a.isBankrupt && b.isBankrupt) return -1;
+      if (b.totalWealth !== a.totalWealth) return b.totalWealth - a.totalWealth;
+      return b.cash - a.cash;
+    });
+
+    return scores.map((s, idx) => ({ ...s, rank: idx + 1 }));
+  };
+
+  const formatTime = (secs: number) => {
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
   // Timer countdown for Shorter Game
@@ -294,34 +355,27 @@ export const App: React.FC = () => {
 
   const handleTimeUp = () => {
     logMessage('⏳ Time is up! Evaluating scores...');
-    let topPlayer: Player | null = null;
-    let maxWealth = -1;
-
-    players.forEach((p) => {
-      if (p.isBankrupt) return;
-      let wealth = p.cash;
-      p.ownedPropertyIndices.forEach((idx) => {
-        const s = BOARD_SPACES[idx];
-        const state = spacesState[idx];
-        wealth += s.price || 0;
-        wealth += (state?.housesCount || 0) * (s.houseCost || 0);
-        if (state?.hasHotel) wealth += s.hotelCost || 0;
-      });
-      if (wealth > maxWealth) {
-        maxWealth = wealth;
-        topPlayer = p;
-      }
-    });
-
-    declareWinner(topPlayer);
+    const computedRankings = calculateRankings();
+    setRankings(computedRankings);
+    const topPlayer = computedRankings[0]?.player || null;
+    declareWinner(topPlayer, computedRankings);
   };
 
-  const declareWinner = (w: Player | null) => {
+  const declareWinner = (w: Player | null, computedRankings?: PlayerScoreSummary[]) => {
+    const finalRankings = computedRankings || calculateRankings();
     setWinner(w);
+    setRankings(finalRankings);
     setPhase('game_over');
     soundService.playVictory();
-    confetti({ particleCount: 180, spread: 90, origin: { y: 0.6 } });
+    confetti({ particleCount: 220, spread: 100, origin: { y: 0.6 } });
     logMessage(`🏆 WINNER: ${w?.name} with the greatest business empire! 🏆`);
+
+    if (isOnlineSession) {
+      multiplayerManager.sendAction({
+        type: 'GAME_OVER',
+        rankings: finalRankings,
+      });
+    }
   };
 
   // Start Game from Lobby
@@ -1423,6 +1477,22 @@ export const App: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Match Countdown Timer Badge */}
+          {isShortGame && timeRemaining > 0 && (
+            <div
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-display font-extrabold shadow-xs transition-colors"
+              style={{
+                backgroundColor: timeRemaining < 120 ? '#FFF0F0' : '#FFF0D6',
+                borderColor: timeRemaining < 120 ? '#D97681' : '#E2B64D',
+                borderWidth: '1px',
+                color: timeRemaining < 120 ? '#D97681' : '#92723E',
+              }}
+            >
+              <Clock size={13} className={timeRemaining < 120 ? 'text-[#D97681] animate-spin' : 'text-[#D69C49]'} />
+              <span>{formatTime(timeRemaining)}</span>
+            </div>
+          )}
+
           {/* Online Room Badge */}
           {isOnlineSession ? (
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#DDF3EA] border border-[#89B46C]/60 shadow-xs text-xs font-game">
@@ -1584,23 +1654,161 @@ export const App: React.FC = () => {
         )}
 
         {phase === 'game_over' && (
-          <div
-            className="rounded-3xl text-center max-w-md w-full space-y-5 event-pop p-8 bg-white border-2 border-[#DCEEF4] shadow-raised"
-          >
-            <div className="text-7xl animate-[float_2s_ease-in-out_infinite]">🏆</div>
-            <h2 className="font-display text-4xl text-[#193D5B]">GAME OVER!</h2>
-            <div className="font-display text-2xl text-[#207E68]">
-              {winner?.name} Wins!
+          <div className="rounded-[28px] max-w-xl w-full p-4 sm:p-7 bg-white border-2 border-[#DCEEF4] shadow-raised flex flex-col items-center space-y-3.5 animate-[fade-in_0.3s_ease-out] select-none my-auto">
+            {/* Crown & Trophy Header */}
+            <div className="text-center space-y-1">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#FFF0D6] border-2 border-[#E2B64D] flex items-center justify-center text-3xl sm:text-4xl shadow-xs mx-auto animate-bounce">
+                🏆
+              </div>
+              <h2 className="font-display text-2xl sm:text-4xl text-[#193D5B] font-black tracking-wide">
+                MATCH FINISHED!
+              </h2>
+              <p className="font-game text-xs sm:text-sm text-[#668195]">
+                Official World Business Empire Standings
+              </p>
             </div>
-            <p className="font-game text-sm text-[#668195]">
-              The wealthiest business tycoon in the world!
-            </p>
-            <button
-              onClick={() => setPhase('lobby')}
-              className="btn-dice w-full py-4 font-display text-lg tracking-wide shadow-md"
-            >
-              🎮 PLAY AGAIN
-            </button>
+
+            {/* Winner Banner */}
+            {winner && (
+              <div className="w-full bg-[#DDF3EA] border-2 border-[#89B46C] rounded-2xl p-3 sm:p-3.5 flex items-center justify-between shadow-xs">
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <div
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center font-display text-2xl text-white shadow-xs border-2 border-white shrink-0"
+                    style={{ backgroundColor: winner.color }}
+                  >
+                    👑
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-display text-base sm:text-lg text-[#163650] font-black">
+                        {winner.name}
+                      </span>
+                      <span className="text-[9px] sm:text-[10px] bg-[#D69C49] text-white font-extrabold px-1.5 py-0.5 rounded shadow-xs">
+                        CHAMPION
+                      </span>
+                    </div>
+                    <div className="text-[11px] sm:text-xs text-[#207E68] font-game font-bold">
+                      Crowned the Wealthiest Tycoon!
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-right">
+                  <div className="text-[9px] sm:text-[10px] text-[#668195] font-game font-bold uppercase">
+                    NET WORTH
+                  </div>
+                  <div className="font-display text-lg sm:text-2xl font-black text-[#207E68]">
+                    ${rankings.find((r) => r.player.id === winner.id)?.totalWealth.toLocaleString() || winner.cash.toLocaleString()}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Standings List (1st, 2nd, 3rd, 4th, 5th, 6th) */}
+            <div className="w-full space-y-1.5 max-h-[46vh] overflow-y-auto no-scrollbar pr-0.5">
+              <div className="flex items-center justify-between text-xs font-game font-bold text-[#668195] px-1">
+                <span>ALL PLAYERS STANDINGS</span>
+                <span>TOTAL WEALTH</span>
+              </div>
+
+              {rankings.map((r) => {
+                const isWinnerRank = r.rank === 1;
+                const isLocalPlayer = isOnlineSession && r.player.id === myPlayerId;
+
+                return (
+                  <div
+                    key={r.player.id}
+                    className={`rounded-2xl p-2.5 sm:p-3 flex items-center justify-between transition-all border ${
+                      isWinnerRank
+                        ? 'bg-[#FFF9EE] border-2 border-[#E2B64D] shadow-sm'
+                        : r.isBankrupt
+                        ? 'bg-gray-100 border-gray-200 opacity-60'
+                        : isLocalPlayer
+                        ? 'bg-[#DAEDF0] border-2 border-[#168B91] shadow-xs'
+                        : 'bg-[#F1F5F8] border border-[#DAEDF0]'
+                    }`}
+                  >
+                    {/* Rank & Player Info */}
+                    <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                      <div
+                        className={`w-7 h-7 rounded-xl flex items-center justify-center font-display font-black text-xs shrink-0 shadow-2xs ${
+                          r.rank === 1
+                            ? 'bg-[#D69C49] text-white'
+                            : r.rank === 2
+                            ? 'bg-[#A3AFC2] text-white'
+                            : r.rank === 3
+                            ? 'bg-[#B58567] text-white'
+                            : 'bg-white border border-[#DCEEF4] text-[#668195]'
+                        }`}
+                      >
+                        {r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : `${r.rank}`}
+                      </div>
+
+                      <div
+                        className="w-8 h-8 rounded-xl flex items-center justify-center font-display text-white text-sm font-bold shrink-0 border border-white shadow-2xs"
+                        style={{ backgroundColor: r.player.color }}
+                      >
+                        {r.player.name.charAt(0)}
+                      </div>
+
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 truncate">
+                          <span className="font-display text-xs sm:text-sm font-extrabold text-[#163650] truncate">
+                            {r.player.name}
+                          </span>
+                          {isLocalPlayer && (
+                            <span className="text-[8px] sm:text-[9px] bg-[#168B91] text-white font-extrabold px-1 rounded">
+                              YOU
+                            </span>
+                          )}
+                          {r.isBankrupt && (
+                            <span className="text-[8px] sm:text-[9px] bg-red-100 text-red-600 font-extrabold px-1 rounded">
+                              BANKRUPT
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Breakdown badges */}
+                        <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-game text-[#668195] mt-0.5">
+                          <span>💵 ${r.cash.toLocaleString()}</span>
+                          <span>•</span>
+                          <span>🌍 ${r.propertyValue.toLocaleString()}</span>
+                          {r.constructionValue > 0 && (
+                            <>
+                              <span>•</span>
+                              <span>🏠 ${r.constructionValue.toLocaleString()}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Total Wealth Amount */}
+                    <div className="text-right shrink-0 pl-2">
+                      <div className="font-display font-black text-sm sm:text-base text-[#207E68]">
+                        ${r.totalWealth.toLocaleString()}
+                      </div>
+                      <div className="text-[9px] text-[#668195] font-game">
+                        {r.player.ownedPropertyIndices.length} {r.player.ownedPropertyIndices.length === 1 ? 'Site' : 'Sites'}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Actions */}
+            <div className="w-full pt-1.5 flex gap-2">
+              <button
+                onClick={() => {
+                  setPhase('lobby');
+                  setIsOnlineSession(false);
+                }}
+                className="btn-dice flex-1 py-3 sm:py-3.5 font-display text-sm sm:text-base tracking-wide shadow-md flex items-center justify-center gap-2"
+              >
+                <span>🎮 RETURN TO LOBBY</span>
+              </button>
+            </div>
           </div>
         )}
       </main>

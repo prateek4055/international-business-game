@@ -16,7 +16,9 @@ class FirebaseService {
   public async createRoom(
     roomCode: string,
     hostPlayer: { name: string; color: string },
-    maxPlayers: 2 | 3 | 4 | 5 | 6
+    maxPlayers: 2 | 3 | 4 | 5 | 6,
+    timerMinutes: number = 30,
+    quickDeal: boolean = false
   ): Promise<RoomMeta> {
     this.cleanup();
     this.currentRoomCode = roomCode.toUpperCase();
@@ -25,6 +27,8 @@ class FirebaseService {
       roomCode: this.currentRoomCode,
       hostName: hostPlayer.name,
       maxPlayers,
+      timerMinutes,
+      quickDeal,
       mode: 'firebase',
       status: 'lobby',
       createdAt: Date.now(),
@@ -175,6 +179,8 @@ class FirebaseService {
           roomCode: data.roomCode,
           hostName: data.hostName,
           maxPlayers: data.maxPlayers,
+          timerMinutes: data.timerMinutes ?? 30,
+          quickDeal: data.quickDeal ?? false,
           mode: 'firebase',
           status: data.status,
           players: data.players || [],

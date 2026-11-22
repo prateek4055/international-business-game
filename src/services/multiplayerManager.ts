@@ -34,7 +34,9 @@ class MultiplayerManager {
   public async createRoom(
     hostPlayer: { name: string; color: string },
     maxPlayers: 2 | 3 | 4 | 5 | 6,
-    customCode?: string
+    customCode?: string,
+    timerMinutes: number = 30,
+    quickDeal: boolean = false
   ): Promise<RoomMeta> {
     this.cleanup();
     const code = customCode || this.generateRoomCode();
@@ -42,7 +44,7 @@ class MultiplayerManager {
     this.isUserHost = true;
     this.activeMode = 'firebase';
 
-    const room = await firebaseService.createRoom(code, hostPlayer, maxPlayers);
+    const room = await firebaseService.createRoom(code, hostPlayer, maxPlayers, timerMinutes, quickDeal);
     this.currentRoom = room;
     return room;
   }
