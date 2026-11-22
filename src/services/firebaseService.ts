@@ -16,7 +16,7 @@ class FirebaseService {
   public async createRoom(
     roomCode: string,
     hostPlayer: { name: string; color: string },
-    maxPlayers: 3 | 4
+    maxPlayers: 2 | 3 | 4
   ): Promise<RoomMeta> {
     this.cleanup();
     this.currentRoomCode = roomCode.toUpperCase();
@@ -51,8 +51,8 @@ class FirebaseService {
       this.listenToRoom(this.currentRoomCode);
       return room;
     } catch (err) {
-      console.warn('[Firebase RTDB] Room creation error:', err);
-      return room;
+      console.error('[Firebase RTDB] Room creation error:', err);
+      throw err;
     }
   }
 

@@ -46,17 +46,16 @@ class MultiplayerManager {
     const code = customCode || this.generateRoomCode();
     this.myPlayerId = 1;
     this.isUserHost = true;
+    this.activeMode = 'firebase';
 
-    // RULE: For 2 Players → WebRTC P2P (Zero Server, direct connection)
-    //       For 3 or 4 Players → Google Firebase Synced Room
-    if (maxPlayers === 2) {
-      this.activeMode = 'p2p';
-      const room = await p2pService.createRoom(code, hostPlayer);
+    try {
+      const room = await firebaseService.createRoom(code, hostPlayer, maxPlayers);
       this.currentRoom = room;
       return room;
-    } else {
-      this.activeMode = 'firebase';
-      const room = await firebaseService.createRoom(code, hostPlayer, maxPlayers);
+    } catch (fbErr) {
+      console.warn('[Multiplayer] Firebase room create failed, using P2P fallback:', fbErr);
+      this.activeMode = 'p2p';
+      const room = await p2pService.createRoom(code, hostPlayer);
       this.currentRoom = room;
       return room;
     }
@@ -71,18 +70,8 @@ class MultiplayerManager {
     const cleanCode = roomCode.trim().toUpperCase();
     this.isUserHost = false;
 
-    // Auto-detect mode: Try P2P first if code matches peer convention or attempt Firebase
-    // P2P peerId is 'ib-game-<code.toLowerCase()>'
+    // Primary: Google Firebase Realtime Database (ultra-fast, instant cross-device sync)
     try {
-      // First attempt P2P (for 2 players)
-      const p2pRoom = await p2pService.joinRoom(cleanCode, friendPlayer);
-      this.activeMode = 'p2p';
-      this.myPlayerId = 2;
-      this.currentRoom = p2pRoom;
-      return p2pRoom;
-    } catch (p2pErr) {
-      console.log('[Multiplayer] P2P connection did not connect, trying Firebase room:', p2pErr);
-      // Fallback / 3-4 players room on Firebase
       this.activeMode = 'firebase';
       const fbRoom = await firebaseService.joinRoom(cleanCode, friendPlayer);
       const myPlayer = fbRoom.players.find(
@@ -91,6 +80,17 @@ class MultiplayerManager {
       this.myPlayerId = myPlayer ? myPlayer.id : fbRoom.players.length;
       this.currentRoom = fbRoom;
       return fbRoom;
+    } catch (fbErr) {
+      console.log('[Multiplayer] Firebase join failed, checking P2P fallback:', fbErr);
+      try {
+        const p2pRoom = await p2pService.joinRoom(cleanCode, friendPlayer);
+        this.activeMode = 'p2p';
+        this.myPlayerId = 2;
+        this.currentRoom = p2pRoom;
+        return p2pRoom;
+      } catch (p2pErr) {
+        throw fbErr;
+      }
     }
   }
 

@@ -494,11 +494,11 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-sm text-[#163650]">2 PLAYERS</span>
                           <span className="text-[10px] bg-[#DDF3EA] text-[#207E68] font-extrabold px-1.5 py-0.5 rounded">
-                            ⚡ P2P WebRTC
+                            ⚡ Instant Cloud Sync
                           </span>
                         </div>
                         <div className="text-[11px] text-[#668195] mt-1">
-                          Direct phone-to-phone • 0ms server lag • Free forever
+                          Head-to-head 2P match • Cross-device real-time
                         </div>
                       </button>
 
@@ -513,11 +513,11 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-sm text-[#163650]">3 OR 4 PLAYERS</span>
                           <span className="text-[10px] bg-[#DAEDF0] text-[#168B91] font-extrabold px-1.5 py-0.5 rounded">
-                            🌐 Google Cloud
+                            🌐 4P Match
                           </span>
                         </div>
                         <div className="text-[11px] text-[#668195] mt-1">
-                          Google Firebase Room sync • Free Spark plan
+                          Full board match • Cross-device real-time
                         </div>
                       </button>
                     </div>
