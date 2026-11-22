@@ -5,17 +5,17 @@ import { Player } from '../data/boardData';
 import { soundService } from '../services/soundService';
 import { 
   Users, 
-  Wifi, 
   Copy, 
   Check, 
   Share2, 
   X, 
   ArrowRight, 
-  Zap, 
-  Cloud, 
   MessageSquare,
   Sparkles,
-  Loader2
+  Loader2,
+  Trash2,
+  RefreshCw,
+  LogOut
 } from 'lucide-react';
 
 interface OnlineRoomModalProps {
@@ -26,10 +26,12 @@ interface OnlineRoomModalProps {
 }
 
 const PLAYER_COLORS = [
-  '#D97681', // Red
-  '#63A2CF', // Blue
-  '#89B46C', // Green
-  '#E2B64D', // Yellow
+  { name: 'Red', hex: '#D97681' },
+  { name: 'Blue', hex: '#63A2CF' },
+  { name: 'Green', hex: '#89B46C' },
+  { name: 'Gold', hex: '#E2B64D' },
+  { name: 'Teal', hex: '#168B91' },
+  { name: 'Navy', hex: '#193D5B' },
 ];
 
 export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
@@ -42,14 +44,14 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
   
   // Host state
   const [hostName, setHostName] = useState<string>('Player 1');
-  const [hostColor, setHostColor] = useState<string>(PLAYER_COLORS[0]);
-  const [maxPlayers, setMaxPlayers] = useState<2 | 3 | 4>(2);
+  const [hostColor, setHostColor] = useState<string>(PLAYER_COLORS[0].hex);
+  const [maxPlayers, setMaxPlayers] = useState<2 | 3 | 4 | 5 | 6>(4);
   const [generatedCode, setGeneratedCode] = useState<string>('');
   
   // Friend join state
   const [joinCode, setJoinCode] = useState<string>(initialRoomCode);
   const [joinName, setJoinName] = useState<string>('Player 2');
-  const [joinColor, setJoinColor] = useState<string>(PLAYER_COLORS[1]);
+  const [joinColor, setJoinColor] = useState<string>(PLAYER_COLORS[1].hex);
   
   // Active Room state (in waiting room)
   const [activeRoom, setActiveRoom] = useState<RoomMeta | null>(null);
@@ -66,7 +68,7 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
     }
   }, [initialRoomCode, isOpen]);
 
-  // Listen to live room updates (when friends join)
+  // Listen to live room updates (when friends join, leave, or start)
   useEffect(() => {
     const unsubRoom = multiplayerManager.onRoomUpdate((room) => {
       setActiveRoom({ ...room });
@@ -78,8 +80,14 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
       }
     });
 
+    const unsubDisconnect = multiplayerManager.onDisconnect(() => {
+      setActiveRoom(null);
+      setErrorMessage('The room was closed or disconnected.');
+    });
+
     return () => {
       unsubRoom();
+      unsubDisconnect();
     };
   }, [activeRoom]);
 
@@ -95,14 +103,15 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
 
     try {
       soundService.playPawnStep();
+      const code = generatedCode || multiplayerManager.generateRoomCode();
       const room = await multiplayerManager.createRoom(
         { name: hostName.trim(), color: hostColor },
         maxPlayers,
-        generatedCode
+        code
       );
       setActiveRoom(room);
     } catch (err: any) {
-      setErrorMessage(err?.message || 'Could not create room. Try again.');
+      setErrorMessage(err?.message || 'Could not create room. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -134,25 +143,61 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
     }
   };
 
+  // Host closes room
+  const handleCloseRoom = async () => {
+    setIsLoading(true);
+    try {
+      await multiplayerManager.closeRoom();
+      setActiveRoom(null);
+      setGeneratedCode(multiplayerManager.generateRoomCode());
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Failed to close room.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Host makes a brand new room
+  const handleMakeNewRoom = async () => {
+    await handleCloseRoom();
+    setGeneratedCode(multiplayerManager.generateRoomCode());
+  };
+
+  // Guest leaves room
+  const handleLeaveRoom = async () => {
+    setIsLoading(true);
+    try {
+      await multiplayerManager.leaveRoom();
+      setActiveRoom(null);
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Failed to leave room.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const launchGame = (room: RoomMeta) => {
-    const gamePlayers: Player[] = room.players.map((p) => ({
-      id: p.id,
-      name: p.name,
-      color: p.color,
-      colorName: p.color === '#D97681' ? 'Red' : p.color === '#63A2CF' ? 'Blue' : p.color === '#89B46C' ? 'Green' : 'Yellow',
-      cash: 25000,
-      creditCardLimit: 10000,
-      hasUsedCreditCard: false,
-      creditCardInstallmentsLeft: 0,
-      hasPassport: true,
-      passportRoundsRemaining: 0,
-      boardPosition: 0,
-      isInJail: false,
-      jailRollAttempts: 0,
-      isBankrupt: false,
-      ownedPropertyIndices: [],
-      isAI: false,
-    }));
+    const gamePlayers: Player[] = room.players.map((p) => {
+      const matched = PLAYER_COLORS.find((c) => c.hex === p.color);
+      return {
+        id: p.id,
+        name: p.name,
+        color: p.color,
+        colorName: matched ? matched.name : 'Red',
+        cash: 25000,
+        creditCardLimit: 10000,
+        hasUsedCreditCard: false,
+        creditCardInstallmentsLeft: 0,
+        hasPassport: true,
+        passportRoundsRemaining: 0,
+        boardPosition: 0,
+        isInJail: false,
+        jailRollAttempts: 0,
+        isBankrupt: false,
+        ownedPropertyIndices: [],
+        isAI: false,
+      };
+    });
 
     onStartOnlineGame(gamePlayers, multiplayerManager.isHost(), multiplayerManager.getMyId());
     onClose();
@@ -169,24 +214,27 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
 
     multiplayerManager.sendAction({
       type: 'START_GAME',
-      players: updatedRoom.players.map((p) => ({
-        id: p.id,
-        name: p.name,
-        color: p.color,
-        colorName: p.color === '#D97681' ? 'Red' : p.color === '#63A2CF' ? 'Blue' : p.color === '#89B46C' ? 'Green' : 'Yellow',
-        cash: 25000,
-        creditCardLimit: 10000,
-        hasUsedCreditCard: false,
-        creditCardInstallmentsLeft: 0,
-        hasPassport: true,
-        passportRoundsRemaining: 0,
-        boardPosition: 0,
-        isInJail: false,
-        jailRollAttempts: 0,
-        isBankrupt: false,
-        ownedPropertyIndices: [],
-        isAI: false,
-      })),
+      players: updatedRoom.players.map((p) => {
+        const matched = PLAYER_COLORS.find((c) => c.hex === p.color);
+        return {
+          id: p.id,
+          name: p.name,
+          color: p.color,
+          colorName: matched ? matched.name : 'Red',
+          cash: 25000,
+          creditCardLimit: 10000,
+          hasUsedCreditCard: false,
+          creditCardInstallmentsLeft: 0,
+          hasPassport: true,
+          passportRoundsRemaining: 0,
+          boardPosition: 0,
+          isInJail: false,
+          jailRollAttempts: 0,
+          isBankrupt: false,
+          ownedPropertyIndices: [],
+          isAI: false,
+        };
+      }),
       shorterGame: false,
       timerMinutes: 30,
     });
@@ -200,19 +248,21 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
     return `${baseUrl}/?join=${activeRoom?.roomCode || generatedCode}`;
   };
 
+  const getShareText = () => {
+    const code = activeRoom?.roomCode || generatedCode;
+    const link = getInviteLink();
+    return `🎲 Let's play International Business!\n👉 Tap to join instantly: ${link}\nOr enter Room Code: ${code}`;
+  };
+
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(getInviteLink());
+    navigator.clipboard.writeText(getShareText());
     setCopied(true);
     soundService.triggerHaptic('light');
     setTimeout(() => setCopied(false), 2500);
   };
 
   const handleShareWhatsApp = () => {
-    const link = getInviteLink();
-    const code = activeRoom?.roomCode || generatedCode;
-    const text = encodeURIComponent(
-      `🎲 Let's play International Business! Join my room with code: ${code}\n👉 Link: ${link}`
-    );
+    const text = encodeURIComponent(getShareText());
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
@@ -221,7 +271,7 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
       try {
         await navigator.share({
           title: 'International Business Game',
-          text: `Join my room in International Business: ${activeRoom?.roomCode || generatedCode}`,
+          text: getShareText(),
           url: getInviteLink(),
         });
       } catch (err) {
@@ -241,7 +291,7 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
       <div
         className="relative w-full max-w-lg rounded-[28px] overflow-hidden border border-[#DCEEF4] bg-white shadow-raised flex flex-col select-none"
       >
-        {/* Top Header Shell */}
+        {/* Top Header */}
         <header className="px-5 py-4 bg-[#193D5B] flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-2xl bg-[#D69C49] flex items-center justify-center text-xl shadow-xs text-white">
@@ -252,7 +302,7 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
                 <span>ONLINE MULTIPLAYER</span>
               </h2>
               <p className="text-xs text-[#C5E7F1] font-medium">
-                Play in real-time with your friends across mobile and web
+                Play live with friends on mobile and web
               </p>
             </div>
           </div>
@@ -268,39 +318,31 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
 
         {/* Modal Body */}
         <div className="p-5 overflow-y-auto max-h-[82vh] space-y-5 bg-white">
-          {/* If already in a Room Waiting Lobby */}
+          {/* If already inside a Room Waiting Lobby */}
           {activeRoom ? (
             <div className="space-y-4">
-              {/* Room Code Badge */}
+              {/* Room Code & Invite Card */}
               <div className="bg-[#FFF9EE] border-2 border-[#E2B64D] rounded-2xl p-4 text-center shadow-xs relative overflow-hidden">
-                <div className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#92723E] mb-1">
-                  {activeRoom.mode === 'p2p' ? (
-                    <span className="flex items-center gap-1.5 text-[#207E68]">
-                      <Zap size={15} /> 2-PLAYER PEER-TO-PEER (0ms LAG)
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1.5 text-[#168B91]">
-                      <Cloud size={15} /> 3-4 PLAYER GOOGLE CLOUD SYNCED
-                    </span>
-                  )}
+                <div className="text-xs font-game font-bold uppercase tracking-wider text-[#92723E] mb-1">
+                  ROOM CODE
                 </div>
 
                 <div className="text-4xl sm:text-5xl font-display font-black text-[#D69C49] tracking-widest my-1">
                   {activeRoom.roomCode}
                 </div>
 
-                <p className="text-xs text-[#668195]">
-                  Share this code with friends or tap Invite below
+                <p className="text-xs text-[#668195] font-game">
+                  Share this code or invite link with your friends to join
                 </p>
 
                 {/* Share Actions */}
-                <div className="flex items-center justify-center gap-2 mt-3 flex-wrap">
+                <div className="flex items-center justify-center gap-2 mt-3.5 flex-wrap">
                   <button
                     onClick={handleCopyLink}
                     className="btn-dice px-3.5 py-1.5 text-xs flex items-center gap-1.5 shadow-sm"
                   >
                     {copied ? <Check size={14} /> : <Copy size={14} />}
-                    <span>{copied ? 'COPIED!' : 'COPY CODE'}</span>
+                    <span>{copied ? 'COPIED LINK & CODE!' : 'COPY INVITE LINK'}</span>
                   </button>
 
                   <button
@@ -316,18 +358,18 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
                     className="btn-secondary px-3.5 py-1.5 text-xs flex items-center gap-1.5 shadow-sm"
                   >
                     <Share2 size={14} />
-                    <span>SHARE LINK</span>
+                    <span>SHARE</span>
                   </button>
                 </div>
               </div>
 
               {/* Waiting Room Players List */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs text-[#163650] font-bold px-1">
+                <div className="flex items-center justify-between text-xs text-[#163650] font-bold px-1 font-game">
                   <span>PLAYERS IN ROOM ({activeRoom.players.length}/{activeRoom.maxPlayers})</span>
                   {activeRoom.players.length < activeRoom.maxPlayers && (
-                    <span className="text-[#D69C49] flex items-center gap-1 animate-pulse">
-                      <Loader2 size={13} className="animate-spin" /> Waiting for friend...
+                    <span className="text-[#D69C49] flex items-center gap-1 animate-pulse font-game font-bold">
+                      <Loader2 size={13} className="animate-spin" /> Waiting for friends to join...
                     </span>
                   )}
                 </div>
@@ -354,7 +396,7 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
                               </span>
                             )}
                           </div>
-                          <span className="text-[10px] text-[#207E68] flex items-center gap-1">
+                          <span className="text-[10px] text-[#207E68] font-game font-bold flex items-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-[#207E68] animate-ping" />
                             Connected
                           </span>
@@ -371,7 +413,7 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
                   {Array.from({ length: activeRoom.maxPlayers - activeRoom.players.length }).map((_, i) => (
                     <div
                       key={`empty-${i}`}
-                      className="bg-white border-2 border-dashed border-[#DAEDF0] rounded-xl p-3 flex items-center justify-center text-xs text-[#668195]"
+                      className="bg-white border-2 border-dashed border-[#DAEDF0] rounded-xl p-3 flex items-center justify-center text-xs text-[#668195] font-game"
                     >
                       Slot {activeRoom.players.length + i + 1} • Waiting...
                     </div>
@@ -380,27 +422,60 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
               </div>
 
               {/* Host Start Action or Friend Waiting Banner */}
-              <div className="pt-2">
+              <div className="pt-2 space-y-2">
                 {multiplayerManager.isHost() ? (
-                  <button
-                    onClick={handleHostStartGame}
-                    disabled={activeRoom.players.length < 2}
-                    className={`w-full py-3.5 text-base flex items-center justify-center gap-2 ${
-                      activeRoom.players.length >= 2
-                        ? 'btn-dice'
-                        : 'opacity-50 grayscale cursor-not-allowed bg-gray-200 text-gray-500 rounded-2xl'
-                    }`}
-                  >
-                    <Sparkles size={18} />
-                    <span>
-                      {activeRoom.players.length >= 2
-                        ? 'START ONLINE GAME 🎲'
-                        : 'WAITING FOR AT LEAST 1 FRIEND TO JOIN...'}
-                    </span>
-                  </button>
+                  <>
+                    <button
+                      onClick={handleHostStartGame}
+                      disabled={activeRoom.players.length < 2 || isLoading}
+                      className={`w-full py-3.5 text-base flex items-center justify-center gap-2 ${
+                        activeRoom.players.length >= 2
+                          ? 'btn-dice'
+                          : 'opacity-50 grayscale cursor-not-allowed bg-gray-200 text-gray-500 rounded-2xl'
+                      }`}
+                    >
+                      <Sparkles size={18} />
+                      <span>
+                        {activeRoom.players.length >= 2
+                          ? `START GAME (${activeRoom.players.length} PLAYERS READY) 🎲`
+                          : 'WAITING FOR AT LEAST 1 FRIEND TO JOIN...'}
+                      </span>
+                    </button>
+
+                    {/* Room Management Controls for Host */}
+                    <div className="flex items-center gap-2 pt-1">
+                      <button
+                        onClick={handleCloseRoom}
+                        disabled={isLoading}
+                        className="flex-1 py-2 rounded-xl text-xs font-game font-bold text-[#D97681] bg-[#FFF0F0] border border-[#D97681]/40 flex items-center justify-center gap-1.5 hover:bg-[#FFE5E5] transition-colors"
+                      >
+                        <Trash2 size={14} />
+                        <span>Close Room</span>
+                      </button>
+
+                      <button
+                        onClick={handleMakeNewRoom}
+                        disabled={isLoading}
+                        className="flex-1 py-2 rounded-xl text-xs font-game font-bold text-[#168B91] bg-[#DAEDF0] border border-[#168B91]/40 flex items-center justify-center gap-1.5 hover:bg-[#CDE8EC] transition-colors"
+                      >
+                        <RefreshCw size={14} />
+                        <span>Make New Room</span>
+                      </button>
+                    </div>
+                  </>
                 ) : (
-                  <div className="text-center py-3 bg-[#DAEDF0] rounded-2xl border border-[#168B91]/30 text-sm text-[#168B91] font-bold">
-                    👑 Host ({activeRoom.hostName}) will launch the game shortly...
+                  <div className="space-y-2">
+                    <div className="text-center py-3 bg-[#DAEDF0] rounded-2xl border border-[#168B91]/30 text-sm text-[#168B91] font-bold">
+                      👑 Waiting for host ({activeRoom.hostName}) to start the game...
+                    </div>
+                    <button
+                      onClick={handleLeaveRoom}
+                      disabled={isLoading}
+                      className="w-full py-2 rounded-xl text-xs font-game font-bold text-[#668195] bg-[#F1F5F8] border border-[#DAEDF0] flex items-center justify-center gap-1.5 hover:bg-gray-200 transition-colors"
+                    >
+                      <LogOut size={14} />
+                      <span>Leave Room</span>
+                    </button>
                   </div>
                 )}
               </div>
@@ -459,17 +534,18 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
                   {/* Player Color */}
                   <div>
                     <label className="text-xs text-[#163650] font-bold block mb-1.5">
-                      PAWN COLOR
+                      CHOOSE PAWN COLOR
                     </label>
-                    <div className="flex gap-3">
+                    <div className="flex gap-2.5 flex-wrap">
                       {PLAYER_COLORS.map((c) => (
                         <button
-                          key={c}
-                          onClick={() => setHostColor(c)}
-                          style={{ backgroundColor: c }}
+                          key={c.hex}
+                          onClick={() => setHostColor(c.hex)}
+                          style={{ backgroundColor: c.hex }}
+                          title={c.name}
                           className={`w-9 h-9 rounded-xl border-2 transition-transform ${
-                            hostColor === c
-                              ? 'border-[#193D5B] scale-110 shadow-md'
+                            hostColor === c.hex
+                              ? 'border-[#193D5B] scale-110 shadow-md ring-2 ring-[#168B91]'
                               : 'border-transparent opacity-70 hover:opacity-100'
                           }`}
                         />
@@ -477,58 +553,35 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
                     </div>
                   </div>
 
-                  {/* Player Count & Hybrid Tech Rule */}
+                  {/* Player Count Selection (2 to 6 Players) */}
                   <div>
                     <label className="text-xs text-[#163650] font-bold block mb-1.5">
-                      GAME ROOM SIZE
+                      TOTAL PLAYERS (2 TO 6)
                     </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => setMaxPlayers(2)}
-                        className={`p-3 rounded-2xl border-2 text-left transition-all ${
-                          maxPlayers === 2
-                            ? 'bg-[#DAEDF0] border-[#168B91] shadow-xs'
-                            : 'bg-[#F1F5F8] border-[#DAEDF0] opacity-70 hover:opacity-100'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-sm text-[#163650]">2 PLAYERS</span>
-                          <span className="text-[10px] bg-[#DDF3EA] text-[#207E68] font-extrabold px-1.5 py-0.5 rounded">
-                            ⚡ Instant Cloud Sync
-                          </span>
-                        </div>
-                        <div className="text-[11px] text-[#668195] mt-1">
-                          Head-to-head 2P match • Cross-device real-time
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => setMaxPlayers(4)}
-                        className={`p-3 rounded-2xl border-2 text-left transition-all ${
-                          maxPlayers >= 3
-                            ? 'bg-[#DAEDF0] border-[#168B91] shadow-xs'
-                            : 'bg-[#F1F5F8] border-[#DAEDF0] opacity-70 hover:opacity-100'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-sm text-[#163650]">3 OR 4 PLAYERS</span>
-                          <span className="text-[10px] bg-[#DAEDF0] text-[#168B91] font-extrabold px-1.5 py-0.5 rounded">
-                            🌐 4P Match
-                          </span>
-                        </div>
-                        <div className="text-[11px] text-[#668195] mt-1">
-                          Full board match • Cross-device real-time
-                        </div>
-                      </button>
+                    <div className="grid grid-cols-5 gap-2">
+                      {([2, 3, 4, 5, 6] as const).map((num) => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => setMaxPlayers(num)}
+                          className={`py-2.5 rounded-xl font-display font-extrabold text-sm transition-all border ${
+                            maxPlayers === num
+                              ? 'bg-[#DAEDF0] border-[#168B91] text-[#168B91] shadow-xs scale-[1.03]'
+                              : 'bg-[#F1F5F8] border-[#DAEDF0] text-[#668195] hover:text-[#163650]'
+                          }`}
+                        >
+                          {num}P
+                        </button>
+                      ))}
                     </div>
                   </div>
 
                   <button
                     onClick={handleCreateRoom}
                     disabled={isLoading}
-                    className="btn-dice w-full py-3 text-base flex items-center justify-center gap-2 mt-2"
+                    className="btn-dice w-full py-3.5 text-base flex items-center justify-center gap-2 mt-2"
                   >
-                    {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Wifi size={18} />}
+                    {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Users size={18} />}
                     <span>CREATE ROOM & GET CODE</span>
                   </button>
                 </div>
@@ -565,17 +618,18 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
 
                   <div>
                     <label className="text-xs text-[#163650] font-bold block mb-1.5">
-                      PAWN COLOR
+                      CHOOSE PAWN COLOR
                     </label>
-                    <div className="flex gap-3">
+                    <div className="flex gap-2.5 flex-wrap">
                       {PLAYER_COLORS.map((c) => (
                         <button
-                          key={c}
-                          onClick={() => setJoinColor(c)}
-                          style={{ backgroundColor: c }}
+                          key={c.hex}
+                          onClick={() => setJoinColor(c.hex)}
+                          style={{ backgroundColor: c.hex }}
+                          title={c.name}
                           className={`w-9 h-9 rounded-xl border-2 transition-transform ${
-                            joinColor === c
-                              ? 'border-[#193D5B] scale-110 shadow-md'
+                            joinColor === c.hex
+                              ? 'border-[#193D5B] scale-110 shadow-md ring-2 ring-[#168B91]'
                               : 'border-transparent opacity-70 hover:opacity-100'
                           }`}
                         />
@@ -586,7 +640,7 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
                   <button
                     onClick={handleJoinRoom}
                     disabled={isLoading}
-                    className="btn-primary w-full py-3 text-base flex items-center justify-center gap-2 mt-2"
+                    className="btn-primary w-full py-3.5 text-base flex items-center justify-center gap-2 mt-2"
                   >
                     {isLoading ? <Loader2 size={18} className="animate-spin" /> : <ArrowRight size={18} />}
                     <span>CONNECT & JOIN GAME</span>

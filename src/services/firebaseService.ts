@@ -1,4 +1,4 @@
-import { ref, set, get, update, onValue, Unsubscribe } from 'firebase/database';
+import { ref, set, get, update, remove, onValue, Unsubscribe } from 'firebase/database';
 import { rtdb } from './firebaseConfig';
 import { GameAction, RoomMeta, RoomPlayer } from './multiplayerTypes';
 
@@ -16,7 +16,7 @@ class FirebaseService {
   public async createRoom(
     roomCode: string,
     hostPlayer: { name: string; color: string },
-    maxPlayers: 2 | 3 | 4
+    maxPlayers: 2 | 3 | 4 | 5 | 6
   ): Promise<RoomMeta> {
     this.cleanup();
     this.currentRoomCode = roomCode.toUpperCase();
@@ -68,13 +68,17 @@ class FirebaseService {
     const snap = await get(roomRef);
 
     if (!snap.exists()) {
-      throw new Error(`Room "${formattedCode}" not found. Please verify the code.`);
+      throw new Error(`Room "${formattedCode}" does not exist. Please check the code.`);
     }
 
     const roomData = snap.val() as RoomMeta;
 
+    if (roomData.status === 'closed') {
+      throw new Error('This room has been closed by the host.');
+    }
+
     if (roomData.status !== 'lobby') {
-      throw new Error('This game has already started!');
+      throw new Error('This game is already in progress!');
     }
 
     if (roomData.players && roomData.players.length >= roomData.maxPlayers) {
@@ -104,6 +108,51 @@ class FirebaseService {
     return { ...roomData, players: updatedPlayers };
   }
 
+  // Host closes the room: notify peers then remove room
+  public async closeRoom(roomCode: string): Promise<void> {
+    const formattedCode = roomCode.toUpperCase();
+    try {
+      const roomRef = ref(rtdb, `ib_rooms/${formattedCode}`);
+      // Mark as closed first so all listeners update their UI
+      await update(roomRef, {
+        status: 'closed',
+        updatedAt: Date.now(),
+        lastAction: { type: 'ROOM_CLOSED' },
+      });
+      // Give peers a moment to receive closed status, then remove
+      setTimeout(async () => {
+        try {
+          await remove(roomRef);
+        } catch (_) {}
+      }, 2500);
+    } catch (err) {
+      console.warn('[Firebase RTDB] Close room error:', err);
+    } finally {
+      this.cleanup();
+    }
+  }
+
+  // Guest leaves the room
+  public async leaveRoom(roomCode: string, playerId: number): Promise<void> {
+    const formattedCode = roomCode.toUpperCase();
+    try {
+      const roomRef = ref(rtdb, `ib_rooms/${formattedCode}`);
+      const snap = await get(roomRef);
+      if (snap.exists()) {
+        const roomData = snap.val() as RoomMeta;
+        const updatedPlayers = (roomData.players || []).filter((p) => p.id !== playerId);
+        await update(roomRef, {
+          players: updatedPlayers,
+          updatedAt: Date.now(),
+        });
+      }
+    } catch (err) {
+      console.warn('[Firebase RTDB] Leave room error:', err);
+    } finally {
+      this.cleanup();
+    }
+  }
+
   private listenToRoom(roomCode: string) {
     if (this.unsubscribeRoom) this.unsubscribeRoom();
 
@@ -117,6 +166,11 @@ class FirebaseService {
         }
 
         const data = snapshot.val();
+        if (data.status === 'closed') {
+          if (this.onDisconnectCallback) this.onDisconnectCallback();
+          return;
+        }
+
         const roomMeta: RoomMeta = {
           roomCode: data.roomCode,
           hostName: data.hostName,
@@ -145,7 +199,7 @@ class FirebaseService {
     if (!this.currentRoomCode) return;
     try {
       const roomRef = ref(rtdb, `ib_rooms/${this.currentRoomCode}`);
-      const timestamp = Date.now();
+      const timestamp = Math.max(Date.now(), this.lastActionTimestamp + 1);
       this.lastActionTimestamp = timestamp;
       await update(roomRef, {
         lastAction: action,

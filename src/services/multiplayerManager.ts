@@ -1,4 +1,3 @@
-import { p2pService } from './p2pService';
 import { firebaseService } from './firebaseService';
 import { GameAction, NetworkMode, RoomMeta, RoomPlayer } from './multiplayerTypes';
 
@@ -6,7 +5,7 @@ type ActionCallback = (action: GameAction) => void;
 type RoomCallback = (room: RoomMeta) => void;
 
 class MultiplayerManager {
-  private activeMode: NetworkMode = 'local';
+  private activeMode: NetworkMode = 'firebase';
   private myPlayerId: number = 1;
   private isUserHost: boolean = false;
   private currentRoom: RoomMeta | null = null;
@@ -15,11 +14,6 @@ class MultiplayerManager {
   private disconnectListeners: Set<() => void> = new Set();
 
   constructor() {
-    // Bind P2P handlers
-    p2pService.onAction((action) => this.dispatchAction(action));
-    p2pService.onRoomUpdate((room) => this.dispatchRoomUpdate(room));
-    p2pService.onDisconnect(() => this.dispatchDisconnect());
-
     // Bind Firebase handlers
     firebaseService.onAction((action) => this.dispatchAction(action));
     firebaseService.onRoomUpdate((room) => this.dispatchRoomUpdate(room));
@@ -36,10 +30,10 @@ class MultiplayerManager {
     return code;
   }
 
-  // Host creates a new room
+  // Host creates a new room (2 to 6 players)
   public async createRoom(
     hostPlayer: { name: string; color: string },
-    maxPlayers: 2 | 3 | 4,
+    maxPlayers: 2 | 3 | 4 | 5 | 6,
     customCode?: string
   ): Promise<RoomMeta> {
     this.cleanup();
@@ -48,17 +42,9 @@ class MultiplayerManager {
     this.isUserHost = true;
     this.activeMode = 'firebase';
 
-    try {
-      const room = await firebaseService.createRoom(code, hostPlayer, maxPlayers);
-      this.currentRoom = room;
-      return room;
-    } catch (fbErr) {
-      console.warn('[Multiplayer] Firebase room create failed, using P2P fallback:', fbErr);
-      this.activeMode = 'p2p';
-      const room = await p2pService.createRoom(code, hostPlayer);
-      this.currentRoom = room;
-      return room;
-    }
+    const room = await firebaseService.createRoom(code, hostPlayer, maxPlayers);
+    this.currentRoom = room;
+    return room;
   }
 
   // Friend joins an existing room
@@ -69,46 +55,44 @@ class MultiplayerManager {
     this.cleanup();
     const cleanCode = roomCode.trim().toUpperCase();
     this.isUserHost = false;
+    this.activeMode = 'firebase';
 
-    // Primary: Google Firebase Realtime Database (ultra-fast, instant cross-device sync)
-    try {
-      this.activeMode = 'firebase';
-      const fbRoom = await firebaseService.joinRoom(cleanCode, friendPlayer);
-      const myPlayer = fbRoom.players.find(
-        (p) => p.name === friendPlayer.name || p.name.startsWith(friendPlayer.name)
-      );
-      this.myPlayerId = myPlayer ? myPlayer.id : fbRoom.players.length;
-      this.currentRoom = fbRoom;
-      return fbRoom;
-    } catch (fbErr) {
-      console.log('[Multiplayer] Firebase join failed, checking P2P fallback:', fbErr);
-      try {
-        const p2pRoom = await p2pService.joinRoom(cleanCode, friendPlayer);
-        this.activeMode = 'p2p';
-        this.myPlayerId = 2;
-        this.currentRoom = p2pRoom;
-        return p2pRoom;
-      } catch (p2pErr) {
-        throw fbErr;
+    const fbRoom = await firebaseService.joinRoom(cleanCode, friendPlayer);
+    const myPlayer = fbRoom.players.find(
+      (p) => p.name === friendPlayer.name || p.name.startsWith(friendPlayer.name)
+    );
+    this.myPlayerId = myPlayer ? myPlayer.id : fbRoom.players.length;
+    this.currentRoom = fbRoom;
+    return fbRoom;
+  }
+
+  // Host closes / deletes the room
+  public async closeRoom(): Promise<void> {
+    if (this.currentRoom && this.isUserHost) {
+      await firebaseService.closeRoom(this.currentRoom.roomCode);
+    }
+    this.cleanup();
+  }
+
+  // Guest leaves the room
+  public async leaveRoom(): Promise<void> {
+    if (this.currentRoom) {
+      if (this.isUserHost) {
+        await firebaseService.closeRoom(this.currentRoom.roomCode);
+      } else {
+        await firebaseService.leaveRoom(this.currentRoom.roomCode, this.myPlayerId);
       }
     }
+    this.cleanup();
   }
 
   public sendAction(action: GameAction) {
-    if (this.activeMode === 'p2p') {
-      p2pService.broadcastAction(action);
-    } else if (this.activeMode === 'firebase') {
-      firebaseService.broadcastAction(action);
-    }
+    firebaseService.broadcastAction(action);
   }
 
   public updateRoomState(room: RoomMeta) {
     this.currentRoom = room;
-    if (this.activeMode === 'p2p') {
-      p2pService.broadcastRoomUpdate(room);
-    } else if (this.activeMode === 'firebase') {
-      firebaseService.broadcastRoomUpdate(room);
-    }
+    firebaseService.broadcastRoomUpdate(room);
   }
 
   public onAction(cb: ActionCallback) {
@@ -131,7 +115,7 @@ class MultiplayerManager {
       try {
         cb(action);
       } catch (err) {
-        console.error('[Multiplayer] Error in action listener:', err);
+        console.error('[Multiplayer] Action dispatch error:', err);
       }
     });
   }
@@ -142,7 +126,7 @@ class MultiplayerManager {
       try {
         cb(room);
       } catch (err) {
-        console.error('[Multiplayer] Error in room listener:', err);
+        console.error('[Multiplayer] Room dispatch error:', err);
       }
     });
   }
@@ -152,38 +136,32 @@ class MultiplayerManager {
       try {
         cb();
       } catch (err) {
-        console.error('[Multiplayer] Error in disconnect listener:', err);
+        console.error('[Multiplayer] Disconnect error:', err);
       }
     });
-  }
-
-  public getMode(): NetworkMode {
-    return this.activeMode;
-  }
-
-  public getMyId(): number {
-    return this.myPlayerId;
   }
 
   public isHost(): boolean {
     return this.isUserHost;
   }
 
+  public getMyId(): number {
+    return this.myPlayerId;
+  }
+
   public getRoom(): RoomMeta | null {
     return this.currentRoom;
   }
 
-  public leaveRoom() {
-    this.cleanup();
+  public getMode(): NetworkMode {
+    return this.activeMode;
   }
 
-  private cleanup() {
-    p2pService.cleanup();
-    firebaseService.cleanup();
-    this.activeMode = 'local';
+  public cleanup() {
     this.currentRoom = null;
     this.isUserHost = false;
     this.myPlayerId = 1;
+    firebaseService.cleanup();
   }
 }
 

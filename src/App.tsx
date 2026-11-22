@@ -135,13 +135,41 @@ export const App: React.FC = () => {
     const unsub = multiplayerManager.onAction((action: GameAction) => {
       handleRemoteAction(action);
     });
+    const unsubDisconnect = multiplayerManager.onDisconnect(() => {
+      if (isOnlineSession) {
+        setIsOnlineSession(false);
+        setPhase('lobby');
+        showTransaction({
+          type: 'jail',
+          title: 'ROOM CLOSED',
+          playerName: 'Host',
+          playerColor: '#697788',
+          description: 'The room was closed. Returning to lobby.',
+          icon: '🚪'
+        });
+      }
+    });
     return () => {
       unsub();
+      unsubDisconnect();
     };
   }, [players, activePlayerIndex, spacesState, isOnlineSession, myPlayerId]);
 
   const handleRemoteAction = (action: GameAction) => {
     switch (action.type) {
+      case 'ROOM_CLOSED':
+        setIsOnlineSession(false);
+        setPhase('lobby');
+        showTransaction({
+          type: 'jail',
+          title: 'ROOM CLOSED',
+          playerName: 'Host',
+          playerColor: '#697788',
+          description: 'The host has closed this room. Returning to lobby.',
+          icon: '🚪'
+        });
+        break;
+
       case 'START_GAME':
         handleStartGame(action.players, action.shorterGame, action.timerMinutes);
         break;
@@ -538,7 +566,10 @@ export const App: React.FC = () => {
             }
             setTurnStatus('done');
           } else {
-            setSelectedSpace(space);
+            // ONLY show ticket decision card to the active player whose turn it is!
+            if (!isOnlineSession || activePlayer.id === myPlayerId) {
+              setSelectedSpace(space);
+            }
           }
         } else if (state.ownerId !== activePlayer.id) {
           const owner = players.find((p) => p.id === state.ownerId);
@@ -592,13 +623,15 @@ export const App: React.FC = () => {
         const total = rolledDice[0] + rolledDice[1];
         const unoEvent = getUnoEvent(total);
         logMessage(`🇺🇳 UNO LANDING: Rolled ${rolledDice[0]} + ${rolledDice[1]} = ${total}. Using UNO Position #${total}.`);
-        setUnoChanceState({
-          isOpen: true,
-          type: 'UNO',
-          diceTotal: total,
-          lastDice: rolledDice,
-          event: unoEvent
-        });
+        if (!isOnlineSession || activePlayer.id === myPlayerId) {
+          setUnoChanceState({
+            isOpen: true,
+            type: 'UNO',
+            diceTotal: total,
+            lastDice: rolledDice,
+            event: unoEvent
+          });
+        }
         break;
       }
 
@@ -606,13 +639,15 @@ export const App: React.FC = () => {
         const total = rolledDice[0] + rolledDice[1];
         const chanceEvent = getChanceEvent(total);
         logMessage(`❓ CHANCE LANDING: Rolled ${rolledDice[0]} + ${rolledDice[1]} = ${total}. Using CHANCE Position #${total}.`);
-        setUnoChanceState({
-          isOpen: true,
-          type: 'CHANCE',
-          diceTotal: total,
-          lastDice: rolledDice,
-          event: chanceEvent
-        });
+        if (!isOnlineSession || activePlayer.id === myPlayerId) {
+          setUnoChanceState({
+            isOpen: true,
+            type: 'CHANCE',
+            diceTotal: total,
+            lastDice: rolledDice,
+            event: chanceEvent
+          });
+        }
         break;
       }
 

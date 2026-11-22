@@ -1,6 +1,6 @@
 import { BoardSpace, Player } from '../data/boardData';
 
-export type NetworkMode = 'local' | 'p2p' | 'firebase';
+export type NetworkMode = 'local' | 'firebase' | 'p2p';
 
 export interface RoomPlayer {
   id: number;
@@ -15,9 +15,9 @@ export interface RoomPlayer {
 export interface RoomMeta {
   roomCode: string;
   hostName: string;
-  maxPlayers: 2 | 3 | 4;
-  mode: 'p2p' | 'firebase';
-  status: 'lobby' | 'playing' | 'ended';
+  maxPlayers: 2 | 3 | 4 | 5 | 6;
+  mode: 'firebase' | 'p2p';
+  status: 'lobby' | 'playing' | 'ended' | 'closed';
   players: RoomPlayer[];
   createdAt: number;
 }
@@ -56,33 +56,16 @@ export type GameAction =
       amount: number;
     }
   | {
-      type: 'CREDIT_CARD';
+      type: 'LIFT_MORTGAGE';
       playerId: number;
-    }
-  | {
-      type: 'PAY_BAIL';
-      playerId: number;
-    }
-  | {
-      type: 'RESOLVE_UNO_CHANCE';
-      playerId: number;
-      cardType: 'UNO' | 'CHANCE';
-      diceTotal: number;
-      event: { title: string; subtitle: string; amount: number; isGain: boolean; text: string };
+      spaceIndex: number;
+      cost: number;
     }
   | {
       type: 'END_TURN';
-      playerId: number;
+      playerId?: number;
       nextPlayerIndex: number;
     }
   | {
-      type: 'SYNC_FULL_STATE';
-      state: {
-        activePlayerIndex: number;
-        players: Player[];
-        spacesState: Record<number, { ownerId?: number; housesCount: number; hasHotel: boolean; isMortgaged: boolean }>;
-        turnStatus: string;
-        lastDice: [number, number];
-        logs: string[];
-      };
+      type: 'ROOM_CLOSED';
     };
