@@ -49,16 +49,16 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           📱 MOBILE GAME CONSOLE DOCK (Visible on screens < lg)
       ────────────────────────────────────────────────────────────── */}
-      <div className="lg:hidden w-full flex flex-col gap-2 select-none">
+      <div className="lg:hidden w-full flex flex-col gap-1.5 select-none">
         {/* Horizontal Players Ribbon with Clay Chips */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 px-1">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 px-0.5">
           {players.map((p) => {
             const isActive = p.id === activePlayer.id;
 
             return (
               <div
                 key={p.id}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all border shrink-0 ${
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl transition-all border shrink-0 ${
                   p.isBankrupt
                     ? 'opacity-30 grayscale bg-gray-100 border-gray-200'
                     : isActive
@@ -67,7 +67,7 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
                 }`}
               >
                 <div
-                  className="w-5 h-5 rounded-full flex items-center justify-center font-display text-white text-[10px] font-extrabold shrink-0 border border-white/80 shadow-xs"
+                  className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center font-display text-white text-[9px] sm:text-[10px] font-extrabold shrink-0 border border-white/80 shadow-xs"
                   style={{ backgroundColor: p.color }}
                 >
                   {p.name.charAt(0)}
@@ -79,7 +79,7 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
                   ${p.cash >= 1000 ? `${(p.cash / 1000).toFixed(p.cash % 1000 === 0 ? 0 : 1)}k` : p.cash}
                 </span>
                 {isActive && (
-                  <span className="w-2 h-2 rounded-full bg-[#168B91] animate-ping ml-0.5" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#168B91] animate-ping ml-0.5" />
                 )}
               </div>
             );
@@ -87,37 +87,37 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
         </div>
 
         {/* Action Controls Bar - Claymorphic Dock */}
-        <div className="flex items-center justify-between gap-2 bg-white border border-[#DCEEF4] rounded-2xl p-2.5 shadow-clay">
+        <div className="flex items-center justify-between gap-1.5 sm:gap-2 bg-white border border-[#DCEEF4] rounded-2xl p-2 sm:p-2.5 shadow-clay">
           {/* Active Player Status */}
-          <div className="flex items-center gap-2 min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
             <div
-              className="w-10 h-10 rounded-2xl flex items-center justify-center font-display text-lg text-white border-2 border-white/80 shadow-xs shrink-0"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center font-display text-sm sm:text-base text-white border-2 border-white/80 shadow-xs shrink-0"
               style={{ backgroundColor: activePlayer.color }}
             >
               {activePlayer.name.charAt(0)}
             </div>
 
             <div className="min-w-0">
-              <div className="flex items-center gap-1.5 truncate">
-                <span className="font-display text-sm text-[#163650] font-extrabold truncate">
+              <div className="flex items-center gap-1 truncate">
+                <span className="font-display text-xs sm:text-sm text-[#163650] font-extrabold truncate max-w-[75px] sm:max-w-[120px]">
                   {activePlayer.name}
                 </span>
                 {activePlayer.isAI && (
-                  <span className="text-[8px] bg-[#DAEDF0] text-[#168B91] font-game font-extrabold px-1 rounded border border-[#168B91]/30">
+                  <span className="text-[7px] sm:text-[8px] bg-[#DAEDF0] text-[#168B91] font-game font-extrabold px-1 rounded border border-[#168B91]/30">
                     BOT
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="font-display text-sm font-extrabold text-[#207E68]">
+              <div className="flex items-center gap-1 mt-0.5">
+                <span className="font-display text-xs sm:text-sm font-extrabold text-[#207E68]">
                   ${activePlayer.cash.toLocaleString()}
                 </span>
                 {!activePlayer.hasUsedCreditCard && (
                   <button
                     onClick={onOpenCreditCard}
-                    className="text-[9px] font-game font-bold text-[#92723E] bg-[#FFF0D6] px-1.5 py-0.5 rounded-lg border border-[#E2B64D]/40 active:scale-95 transition-transform"
+                    className="text-[8px] sm:text-[9px] font-game font-bold text-[#92723E] bg-[#FFF0D6] px-1 sm:px-1.5 py-0.5 rounded-lg border border-[#E2B64D]/40 active:scale-95 transition-transform shrink-0"
                   >
-                    💳 $10k Card
+                    💳 $10k
                   </button>
                 )}
               </div>
@@ -125,17 +125,17 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
           </div>
 
           {/* Dice Slot & Clay Action Buttons */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {diceSlot ? (
-              <div className="w-[84px] h-[52px] rounded-xl overflow-hidden bg-[#E9F5F8] border border-[#DCEEF4] shrink-0 flex items-center justify-center shadow-inner">
+              <div className="w-[70px] sm:w-[84px] h-[46px] sm:h-[52px] rounded-xl overflow-hidden bg-[#E9F5F8] border border-[#DCEEF4] shrink-0 flex items-center justify-center shadow-inner">
                 {diceSlot}
               </div>
             ) : (
-              <div className="bg-[#E9F5F8] border border-[#DCEEF4] rounded-xl px-2.5 py-1 text-center shadow-xs">
-                <span className="text-[8px] font-game text-[#668195] uppercase block font-extrabold leading-none">
+              <div className="bg-[#E9F5F8] border border-[#DCEEF4] rounded-xl px-2 py-1 text-center shadow-xs">
+                <span className="text-[7px] font-game text-[#668195] uppercase block font-extrabold leading-none">
                   Dice
                 </span>
-                <span className="font-display text-base text-[#D69C49] font-black leading-tight">
+                <span className="font-display text-sm sm:text-base text-[#D69C49] font-black leading-tight">
                   {lastDice[0] + lastDice[1]}
                 </span>
               </div>
@@ -143,10 +143,10 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
 
             {/* Primary Action Button */}
             {isOnlineSession && !isMyTurn ? (
-              <div className="bg-[#F1F5F8] border border-[#DAEDF0] rounded-xl px-3 py-2 text-center shadow-xs">
-                <span className="text-[10px] font-bold text-[#168B91] flex items-center gap-1.5 animate-pulse">
-                  <span className="w-2 h-2 rounded-full bg-[#168B91]" />
-                  Waiting for {activePlayer.name}...
+              <div className="bg-[#F1F5F8] border border-[#DAEDF0] rounded-xl px-2 sm:px-3 py-1.5 text-center shadow-xs max-w-[130px] sm:max-w-none">
+                <span className="text-[9px] sm:text-[10px] font-bold text-[#168B91] flex items-center gap-1 truncate animate-pulse">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#168B91] shrink-0" />
+                  <span className="truncate">Waiting for {activePlayer.name}...</span>
                 </span>
               </div>
             ) : (
@@ -155,9 +155,9 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
                   <button
                     onClick={onRollDice}
                     disabled={activePlayer.isAI}
-                    className="btn-dice px-4 sm:px-5 py-2.5 text-xs sm:text-sm flex items-center gap-1.5 shadow-md disabled:opacity-40"
+                    className="btn-dice px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm flex items-center gap-1 sm:gap-1.5 shadow-md disabled:opacity-40"
                   >
-                    <Dices size={17} />
+                    <Dices size={15} />
                     <span>ROLL DICE</span>
                   </button>
                 )}
@@ -166,9 +166,9 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
                   <button
                     onClick={onEndTurn}
                     disabled={activePlayer.isAI}
-                    className="btn-primary px-4 sm:px-5 py-2.5 text-xs sm:text-sm flex items-center gap-1.5 shadow-md disabled:opacity-40"
+                    className="btn-primary px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm flex items-center gap-1 sm:gap-1.5 shadow-md disabled:opacity-40"
                   >
-                    <CheckCircle2 size={17} />
+                    <CheckCircle2 size={15} />
                     <span>END TURN</span>
                   </button>
                 )}
@@ -178,9 +178,9 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
             {activePlayer.isInJail && (
               <button
                 onClick={onOpenJail}
-                className="bg-[#D97681] text-white font-game font-bold px-3 py-2 text-xs rounded-xl flex items-center gap-1 shadow-sm active:scale-95"
+                className="bg-[#D97681] text-white font-game font-bold px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs rounded-xl flex items-center gap-1 shadow-sm active:scale-95"
               >
-                <Lock size={14} />
+                <Lock size={12} />
                 <span>JAIL</span>
               </button>
             )}
@@ -192,8 +192,8 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
           💻 DESKTOP HUD (Visible on screens >= lg)
       ────────────────────────────────────────────────────────────── */}
       <div className="hidden lg:flex flex-col gap-3 w-full">
-        {/* Player Cards Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+        {/* Player Cards: Clean 2-column grid in 380px sidebar */}
+        <div className="grid grid-cols-2 gap-2">
           {players.map((p) => {
             const isActive = p.id === activePlayer.id;
 

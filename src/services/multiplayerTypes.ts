@@ -43,6 +43,13 @@ export type GameAction =
       initialSpacesState?: Record<number, { ownerId?: number; housesCount: number; hasHotel: boolean; isMortgaged: boolean }>;
     }
   | {
+      type: 'RESTART_GAME';
+      players: Player[];
+      shorterGame: boolean;
+      timerMinutes: number;
+      initialSpacesState?: Record<number, { ownerId?: number; housesCount: number; hasHotel: boolean; isMortgaged: boolean }>;
+    }
+  | {
       type: 'GAME_OVER';
       rankings: PlayerScoreSummary[];
     }

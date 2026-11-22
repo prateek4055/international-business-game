@@ -182,13 +182,20 @@ export const App: React.FC = () => {
         break;
 
       case 'START_GAME':
+      case 'RESTART_GAME':
         setIsOnlineSession(true);
-        setIsHost(false);
+        setIsHost(multiplayerManager.isHost());
         setMyPlayerId(multiplayerManager.getMyId());
         setOnlineModalOpen(false);
-        if (phase !== 'playing') {
-          handleStartGame(action.players, action.shorterGame, action.timerMinutes);
-        }
+        handleStartGame(action.players, action.shorterGame, action.timerMinutes, action.initialSpacesState);
+        showTransaction({
+          type: 'gain',
+          title: action.type === 'RESTART_GAME' ? 'MATCH RESTARTED' : 'MATCH STARTED',
+          playerName: 'Bank',
+          playerColor: '#207E68',
+          description: 'All players received $25,000 cash! All 36 properties are unowned.',
+          icon: '💰'
+        });
         break;
 
       case 'ROLL_DICE':
@@ -378,10 +385,59 @@ export const App: React.FC = () => {
     }
   };
 
-  // Start Game from Lobby
-  const handleStartGame = (initialPlayers: Player[], shorter: boolean, timerMins: number) => {
-    // Ensure every player starts with $25,000 Cash, $10,000 Credit Card, and a Passport
+  // Start Game from Lobby or Online Room
+  const handleStartGame = (
+    initialPlayers: Player[],
+    shorter: boolean,
+    timerMins: number,
+    presetSpacesState?: Record<number, { ownerId?: number; housesCount: number; hasHotel: boolean; isMortgaged: boolean }>
+  ) => {
+    // Ensure every player starts with strictly $25,000 Cash, $10,000 Credit Card limit, and Active Passport
     const finalizedPlayers: Player[] = initialPlayers.map((p) => ({
+      ...p,
+      cash: GAME_CONSTANTS.STARTING_CASH, // Strictly $25,000
+      creditCardLimit: GAME_CONSTANTS.CREDIT_CARD_LIMIT, // $10,000
+      hasUsedCreditCard: false,
+      creditCardInstallmentsLeft: 0,
+      hasPassport: true,
+      passportRoundsRemaining: 0,
+      boardPosition: 0,
+      isInJail: false,
+      jailRollAttempts: 0,
+      isBankrupt: false,
+      ownedPropertyIndices: [] as number[], // Strictly unowned / empty
+    }));
+
+    setPlayers(finalizedPlayers);
+    setActivePlayerIndex(0);
+    setIsShortGame(shorter);
+    setTimeRemaining(timerMins > 0 ? timerMins * 60 : 0);
+    setLogs([]);
+    setWinner(null);
+    setRankings([]);
+    setTurnStatus('idle');
+    setLastDice([1, 1]);
+    setTransactionEvent(null);
+
+    // Initialize all 36 spaces as 100% UNOWNED
+    const initialSpacesState: Record<number, { ownerId?: number; housesCount: number; hasHotel: boolean; isMortgaged: boolean }> = {};
+    BOARD_SPACES.forEach((s) => {
+      initialSpacesState[s.index] = { housesCount: 0, hasHotel: false, isMortgaged: false, ownerId: undefined };
+    });
+
+    setSpacesState(presetSpacesState || initialSpacesState);
+    setPhase('playing');
+    logMessage(`🎲 Game Started! Starting capital: $25,000 Cash, $10,000 Credit Line, and Passport issued to all players. All properties unowned.`);
+  };
+
+  // Restart match (available in online host and local play)
+  const handleRestartMatch = () => {
+    const cleanSpacesState: Record<number, { ownerId?: number; housesCount: number; hasHotel: boolean; isMortgaged: boolean }> = {};
+    BOARD_SPACES.forEach((s) => {
+      cleanSpacesState[s.index] = { housesCount: 0, hasHotel: false, isMortgaged: false, ownerId: undefined };
+    });
+
+    const cleanPlayers: Player[] = players.map((p) => ({
       ...p,
       cash: GAME_CONSTANTS.STARTING_CASH,
       creditCardLimit: GAME_CONSTANTS.CREDIT_CARD_LIMIT,
@@ -393,42 +449,39 @@ export const App: React.FC = () => {
       isInJail: false,
       jailRollAttempts: 0,
       isBankrupt: false,
-      ownedPropertyIndices: [] as number[]
+      ownedPropertyIndices: [],
     }));
 
-    setPlayers(finalizedPlayers);
-    setActivePlayerIndex(0);
-    setIsShortGame(shorter);
-    setTimeRemaining(timerMins * 60);
-    setLogs([]);
-    setWinner(null);
-    setTurnStatus('idle');
-    setTransactionEvent(null);
+    const durationMins = isShortGame ? Math.max(15, Math.ceil(timeRemaining > 0 ? timeRemaining / 60 : 30)) : 0;
 
-    // Initialize all 36 spaces as unowned
-    const initialSpacesState: Record<number, { ownerId?: number; housesCount: number; hasHotel: boolean; isMortgaged: boolean }> = {};
-    BOARD_SPACES.forEach((s) => {
-      initialSpacesState[s.index] = { housesCount: 0, hasHotel: false, isMortgaged: false };
-    });
-
-    // Shorter game deals 2 random properties
-    if (shorter) {
-      const purchasable = BOARD_SPACES.filter((s) => s.type === 'Property' || s.type === 'Utility').sort(() => 0.5 - Math.random());
-      let cardIdx = 0;
-      finalizedPlayers.forEach((p) => {
-        for (let c = 0; c < 2 && cardIdx < purchasable.length; c++) {
-          const prop = purchasable[cardIdx++];
-          initialSpacesState[prop.index].ownerId = p.id;
-          p.ownedPropertyIndices.push(prop.index);
-          p.cash -= prop.price || 0;
-          logMessage(`${p.name} dealt ${prop.name} for $${prop.price}`);
-        }
+    if (isOnlineSession && isHost) {
+      multiplayerManager.sendAction({
+        type: 'RESTART_GAME',
+        players: cleanPlayers,
+        shorterGame: isShortGame,
+        timerMinutes: durationMins,
+        initialSpacesState: cleanSpacesState,
       });
+
+      const currentRoom = multiplayerManager.getRoom();
+      if (currentRoom) {
+        multiplayerManager.updateRoomState({
+          ...currentRoom,
+          status: 'playing',
+        });
+      }
     }
 
-    setSpacesState(initialSpacesState);
-    setPhase('playing');
-    logMessage(`🎲 Game Started! Starting capital: $25,000 Cash, $10,000 Credit Line, and Passport issued to all players.`);
+    handleStartGame(cleanPlayers, isShortGame, durationMins, cleanSpacesState);
+
+    showTransaction({
+      type: 'gain',
+      title: 'MATCH RESTARTED',
+      playerName: 'Bank',
+      playerColor: '#207E68',
+      description: 'Clean start! All players received $25,000 Cash and all 36 properties are unowned.',
+      icon: '🔄',
+    });
   };
 
   // ==========================================
@@ -1470,7 +1523,7 @@ export const App: React.FC = () => {
             <span className="font-display text-xs sm:text-sm text-white font-extrabold leading-none tracking-wide">
               INTERNATIONAL <span className="text-[#D69C49]">BUSINESS</span>
             </span>
-            <div className="text-[8px] sm:text-[9px] font-game text-[#C5E7F1] leading-none font-bold mt-0.5">
+            <div className="hidden sm:block text-[8px] sm:text-[9px] font-game text-[#C5E7F1] leading-none font-bold mt-0.5">
               ★ Official $25k Cash & $10k Bank Card ★
             </div>
           </div>
@@ -1514,11 +1567,11 @@ export const App: React.FC = () => {
 
           <button
             onClick={() => setDeedCollectionOpen(true)}
-            className="btn-secondary px-3 py-1.5 text-xs flex items-center gap-1.5 shadow-sm"
+            className="btn-secondary px-2.5 sm:px-3 py-1.5 text-xs flex items-center gap-1.5 shadow-sm"
             title="Browse 20 Countries + 6 Utilities Deed Collection"
           >
             <span>📜</span>
-            <span className="hidden sm:inline">DEEDS GALLERY</span>
+            <span className="hidden md:inline">DEEDS</span>
           </button>
 
           <button
@@ -1530,17 +1583,37 @@ export const App: React.FC = () => {
           </button>
 
           {phase === 'playing' && (
-            <button
-              onClick={() => {
-                if (isOnlineSession) multiplayerManager.leaveRoom();
-                setIsOnlineSession(false);
-                setPhase('lobby');
-              }}
-              className="bg-[#FFF0F0] text-[#D97681] border border-[#D97681]/40 px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 shadow-xs font-semibold active:scale-95"
-            >
-              <RotateCcw size={13} />
-              <span className="hidden sm:inline">LOBBY</span>
-            </button>
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              {(!isOnlineSession || isHost) && (
+                <button
+                  onClick={() => {
+                    if (window.confirm('Restart game? All players will receive clean $25,000 cash and all 36 properties will reset to unowned.')) {
+                      handleRestartMatch();
+                    }
+                  }}
+                  className="bg-[#FFF0D6] text-[#92723E] border border-[#E2B64D]/50 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs flex items-center gap-1 shadow-xs font-semibold active:scale-95"
+                  title="Restart Match (All $25,000 cash & unowned properties)"
+                >
+                  <RotateCcw size={13} />
+                  <span className="hidden md:inline">RESTART</span>
+                </button>
+              )}
+
+              <button
+                onClick={() => {
+                  if (window.confirm('Return to lobby? This will exit the current match.')) {
+                    if (isOnlineSession) multiplayerManager.leaveRoom();
+                    setIsOnlineSession(false);
+                    setPhase('lobby');
+                  }
+                }}
+                className="bg-[#FFF0F0] text-[#D97681] border border-[#D97681]/40 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs flex items-center gap-1 shadow-xs font-semibold active:scale-95"
+                title="Exit to Lobby"
+              >
+                <span>🚪</span>
+                <span className="hidden md:inline">LOBBY</span>
+              </button>
+            </div>
           )}
         </div>
       </header>
@@ -1595,7 +1668,7 @@ export const App: React.FC = () => {
             </div>
 
             {/* Side Column (Desktop Only >= lg) */}
-            <div className="hidden lg:flex w-full lg:max-w-[380px] flex-col gap-3 shrink-0">
+            <div className="hidden lg:flex w-full lg:max-w-[380px] max-h-[min(calc(100dvh-85px),840px)] flex-col gap-2.5 shrink-0 overflow-y-auto no-scrollbar">
               <PlayerHUD
                 players={players}
                 activePlayer={activePlayer}
@@ -1798,15 +1871,33 @@ export const App: React.FC = () => {
             </div>
 
             {/* Actions */}
-            <div className="w-full pt-1.5 flex gap-2">
+            <div className="w-full pt-1.5 flex flex-col sm:flex-row gap-2">
+              {(!isOnlineSession || isHost) && (
+                <button
+                  onClick={handleRestartMatch}
+                  className="btn-primary flex-1 py-3 sm:py-3.5 font-display text-xs sm:text-sm tracking-wide shadow-md flex items-center justify-center gap-2"
+                >
+                  <RotateCcw size={16} />
+                  <span>PLAY AGAIN ($25K & UNOWNED BOARD)</span>
+                </button>
+              )}
+
+              {isOnlineSession && !isHost && (
+                <div className="flex-1 py-2.5 px-3 rounded-2xl bg-[#DAEDF0] border border-[#168B91]/30 flex items-center justify-center gap-2 text-xs font-game font-bold text-[#168B91] animate-pulse">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#168B91]" />
+                  <span>Waiting for Room Host to restart match...</span>
+                </div>
+              )}
+
               <button
                 onClick={() => {
+                  if (isOnlineSession) multiplayerManager.leaveRoom();
                   setPhase('lobby');
                   setIsOnlineSession(false);
                 }}
-                className="btn-dice flex-1 py-3 sm:py-3.5 font-display text-sm sm:text-base tracking-wide shadow-md flex items-center justify-center gap-2"
+                className="btn-secondary px-4 py-3 sm:py-3.5 font-display text-xs sm:text-sm tracking-wide shadow-sm flex items-center justify-center gap-2"
               >
-                <span>🎮 RETURN TO LOBBY</span>
+                <span>🏠 RETURN TO LOBBY</span>
               </button>
             </div>
           </div>

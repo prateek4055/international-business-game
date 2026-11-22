@@ -165,7 +165,7 @@ export const Board: React.FC<BoardProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full max-w-[min(calc(100vw-16px),calc(100dvh-260px),840px)] max-h-[min(calc(100vw-16px),calc(100dvh-260px),840px)] aspect-square mx-auto rounded-[20px] sm:rounded-[32px] overflow-hidden select-none shadow-[0_8px_28px_rgba(25,61,91,0.18)] border-3 sm:border-4 border-white/80 bg-[#DCEEF4]"
+      className="relative w-full aspect-square mx-auto rounded-[20px] sm:rounded-[32px] overflow-hidden select-none shadow-[0_8px_28px_rgba(25,61,91,0.18)] border-3 sm:border-4 border-white/80 bg-[#DCEEF4] max-w-[min(calc(100vw-12px),calc(100dvh-185px),640px)] max-h-[min(calc(100vw-12px),calc(100dvh-185px),640px)] lg:max-w-[min(calc(100vw-420px),calc(100dvh-85px),840px)] lg:max-h-[min(calc(100vw-420px),calc(100dvh-85px),840px)]"
     >
       {/* 1600x1600 Canvas Scaled to Fit Responsive Container */}
       <div

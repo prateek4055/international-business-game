@@ -226,37 +226,45 @@ export const OnlineRoomModal: React.FC<OnlineRoomModalProps> = ({
     };
 
     const roomTimer = activeRoom.timerMinutes ?? timerMinutes;
-    const roomQuick = activeRoom.quickDeal ?? quickDeal;
+
+    // Explicitly guarantee all 36 spaces start 100% UNOWNED
+    const cleanSpacesState: Record<number, { ownerId?: number; housesCount: number; hasHotel: boolean; isMortgaged: boolean }> = {};
+    for (let i = 0; i < 36; i++) {
+      cleanSpacesState[i] = { housesCount: 0, hasHotel: false, isMortgaged: false, ownerId: undefined };
+    }
+
+    const cleanPlayers = updatedRoom.players.map((p) => {
+      const matched = PLAYER_COLORS.find((c) => c.hex === p.color);
+      return {
+        id: p.id,
+        name: p.name,
+        color: p.color,
+        colorName: matched ? matched.name : 'Red',
+        cash: 25000,
+        creditCardLimit: 10000,
+        hasUsedCreditCard: false,
+        creditCardInstallmentsLeft: 0,
+        hasPassport: true,
+        passportRoundsRemaining: 0,
+        boardPosition: 0,
+        isInJail: false,
+        jailRollAttempts: 0,
+        isBankrupt: false,
+        ownedPropertyIndices: [] as number[],
+        isAI: false,
+      };
+    });
 
     multiplayerManager.sendAction({
       type: 'START_GAME',
-      players: updatedRoom.players.map((p) => {
-        const matched = PLAYER_COLORS.find((c) => c.hex === p.color);
-        return {
-          id: p.id,
-          name: p.name,
-          color: p.color,
-          colorName: matched ? matched.name : 'Red',
-          cash: 25000,
-          creditCardLimit: 10000,
-          hasUsedCreditCard: false,
-          creditCardInstallmentsLeft: 0,
-          hasPassport: true,
-          passportRoundsRemaining: 0,
-          boardPosition: 0,
-          isInJail: false,
-          jailRollAttempts: 0,
-          isBankrupt: false,
-          ownedPropertyIndices: [],
-          isAI: false,
-        };
-      }),
-      shorterGame: roomTimer > 0 || roomQuick,
+      players: cleanPlayers,
+      shorterGame: roomTimer > 0,
       timerMinutes: roomTimer,
+      initialSpacesState: cleanSpacesState,
     });
 
     multiplayerManager.updateRoomState(updatedRoom);
-    launchGame(updatedRoom, roomTimer > 0 || roomQuick, roomTimer);
+    launchGame(updatedRoom, roomTimer > 0, roomTimer);
   };
 
   const getInviteLink = () => {
